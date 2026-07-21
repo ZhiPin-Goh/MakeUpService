@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MakeUpService/MakeUpService.csproj" />
+  <Project Path="MakeUpServiceAdmin/MakeUpServiceAdmin.csproj" Id="27a8425e-243d-4337-aca2-02a09c8d7a4d" />
+</Solution>
