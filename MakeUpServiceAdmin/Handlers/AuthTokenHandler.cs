@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Net;
 using System.Net.Http.Headers;
@@ -37,16 +37,55 @@ namespace MakeUpServiceAdmin.Handlers
 
                 var newToken = await RefreshTokenAsync(accessToken, refreshToken);
                 if (newToken == null)
-                    await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-                else
                 {
-                    await UpdateCookieAsync(httpContext, newToken.Token, newToken.RefreshToken);
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", newToken.Token);
-                    return await base.SendAsync(request, cancellationToken);
+                    await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    return response;
                 }
+
+                var actualToken = newToken.Token ?? newToken.AccessToken;
+                if (string.IsNullOrEmpty(actualToken))
+                {
+                    await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    return response;
+                }
+
+                await UpdateCookieAsync(httpContext, actualToken, newToken.RefreshToken ?? "");
+                
+                var clonedRequest = await CloneHttpRequestMessageAsync(request);
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", actualToken);
+                
+                response.Dispose(); // Free resources from the failed 401 response
+                return await base.SendAsync(clonedRequest, cancellationToken);
             }
             return response;
+        }
+
+        private async Task<HttpRequestMessage> CloneHttpRequestMessageAsync(HttpRequestMessage req)
+        {
+            var clone = new HttpRequestMessage(req.Method, req.RequestUri)
+            {
+                Version = req.Version
+            };
+
+            if (req.Content != null)
+            {
+                var ms = new MemoryStream();
+                await req.Content.CopyToAsync(ms);
+                ms.Position = 0;
+                clone.Content = new StreamContent(ms);
+
+                foreach (var header in req.Content.Headers)
+                {
+                    clone.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                }
+            }
+
+            foreach (var header in req.Headers)
+            {
+                clone.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            }
+
+            return clone;
         }
         private async Task<RefreshTokenResponseDTO?> RefreshTokenAsync(string oldAccess, string refresh)
         {
@@ -59,10 +98,14 @@ namespace MakeUpServiceAdmin.Handlers
                 AccessToken = oldAccess,
                 RefreshToken = refresh
             };
-            var response = await client.PostAsJsonAsync("api/user/authentication/refreshuser", requestDto);
+            var response = await client.PostAsJsonAsync("api/admin/auth/refresh-token", requestDto);
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<RefreshTokenResponseDTO>();
+                var result = await response.Content.ReadFromJsonAsync<RefreshTokenResponseDTO>();
+                if (result != null && (!string.IsNullOrEmpty(result.Token) || !string.IsNullOrEmpty(result.AccessToken)))
+                {
+                    return result;
+                }
             }
             return null;
         }
@@ -96,8 +139,9 @@ namespace MakeUpServiceAdmin.Handlers
         //New Token
         public class RefreshTokenResponseDTO
         {
-            public string Token { get; set; }
-            public string RefreshToken { get; set; }
+            public string? Token { get; set; }
+            public string? AccessToken { get; set; }
+            public string? RefreshToken { get; set; }
         }
     }
 }

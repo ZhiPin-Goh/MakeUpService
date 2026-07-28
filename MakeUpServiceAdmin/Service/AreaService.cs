@@ -26,6 +26,19 @@ namespace MakeUpServiceAdmin.Service
                 throw new Exception($"Failed to retrieve areas. Status code: {response.StatusCode}");
             }
         }
+        public async Task<List<GetAreaDto>> GetAllActiveAreaAsync()
+        {
+            var response = await _httpClient.GetAsync("api/admin/areas/active-areas");
+            if (response.IsSuccessStatusCode)
+            {
+                var areas = await response.Content.ReadFromJsonAsync<List<GetAreaDto>>();
+                return areas ?? new List<GetAreaDto> { new GetAreaDto() };
+            }
+            else
+            {
+                throw new Exception($"Failed to retrieve areas. Status code: {response.StatusCode}");
+            }
+        }
         public async Task<(bool IsSuccess, string message)> CreateAreaAsync(CreateAreaVm model, string idempotencyKey)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "api/admin/areas/create");
@@ -62,7 +75,7 @@ namespace MakeUpServiceAdmin.Service
         }
         public async Task<(bool IsSuccess, string message)> ToggelAreaAsync(int areaID)
         {
-            var response = await _httpClient.PostAsync($"api/admin/areas/toggle/{areaID}", null);
+            var response = await _httpClient.PostAsync($"api/admin/areas/toggle-status/{areaID}", null);
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadFromJsonAsync<ApiResponse>();
@@ -71,7 +84,7 @@ namespace MakeUpServiceAdmin.Service
             else
             {
                 var errorResponse = await response.Content.ReadFromJsonAsync<ApiResponse>();
-                throw new Exception(errorResponse?.Error ?? "Failed to toggle area.");
+                throw new Exception(errorResponse?.Message ?? "Failed to toggle area.");
             }
         }
     }

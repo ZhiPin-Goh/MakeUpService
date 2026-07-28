@@ -31,7 +31,7 @@ namespace MakeUpServiceAdmin.Service
                 return "[]";
             }
 
-            var response = await _httpClient.GetAsync($"api/admin/fee/location-suggestions?query={Uri.EscapeDataString(query)}", cancellationToken);
+            var response = await _httpClient.GetAsync($"api/admin/fee/completelocation?query={Uri.EscapeDataString(query)}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
             if (response.IsSuccessStatusCode)

@@ -1,4 +1,4 @@
-﻿using MakeUpServiceAdmin.Service;
+using MakeUpServiceAdmin.Service;
 using MakeUpServiceAdmin.ViewModel.AreaVm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ namespace MakeUpServiceAdmin.Controllers
         {
             _services = services;
         }
-        [HttpGet("getareas")]
+        [HttpGet("area/areas")]
         public async Task<IActionResult> GetAreas()
         {
             try
@@ -26,12 +26,19 @@ namespace MakeUpServiceAdmin.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [Route("createarea")]
+
+        [HttpGet("api/areas/list")]
+        public async Task<IActionResult> GetAreasList()
+        {
+            var areas = await _services.GetAllActiveAreaAsync();
+            return Json(areas);
+        }
+        [Route("area/create-area")]
         public IActionResult CreateArea()
         {
             return View();
         }
-        [HttpPost("createarea")]
+        [HttpPost("area/create-area")]
         public async Task<IActionResult> CreateArea([FromBody] CreateAreaVm model, [FromHeader(Name = "X-Idempotency-Key")] string idempotencyKey)
         {
             if (model.Price <= 0)
@@ -48,8 +55,13 @@ namespace MakeUpServiceAdmin.Controllers
                 return Json(new { success = false, message = response.message });
             }
         }
+        [Route("area/edit-area")]
+        public IActionResult EditArea(int areaID)
+        {
+            return View();
+        }
         // Update view use pop up design
-        [HttpPost("updatearea")]
+        [HttpPost("area/update-area")]
         public async Task<IActionResult> UpdateArea([FromBody] UpdateServiceVm model)
         {
             if (!ModelState.IsValid)
@@ -86,7 +98,7 @@ namespace MakeUpServiceAdmin.Controllers
                 return Json(new { success = false, message = response.message });
             }
         }
-        [HttpPost("togglearea/{areaID}")]
+        [HttpPost("area/toggle-area/{areaID}")]
         public async Task<IActionResult> ToggleArea(int areaID)
         {
             if (areaID == 0)

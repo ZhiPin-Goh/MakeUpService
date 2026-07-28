@@ -1,0 +1,837 @@
+@using MakeUpServiceAdmin.DTO.ServiceDto
+@model MakeUpServiceAdmin.DTO.PaginatedResponse<ServiceDto>
+@{
+    ViewData["Title"] = "Service Management";
+}
+
+<style>
+    /* Page Layout */
+    .page-wrapper {
+        max-width: 1440px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .page-header {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    @@media (min-width: 640px) {
+        .page-header {
+            flex-direction: row;
+            align-items: center;
+        }
+    }
+
+    .header-title-container h2 {
+        font-size: 1.875rem;
+        color: var(--color-on-background);
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+    }
+    .header-title-container p {
+        color: var(--color-on-surface-variant);
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    /* Filter Form */
+    .filter-form {
+        padding: 1rem;
+        border-bottom: 1px solid var(--color-surface-container-highest);
+        background-color: rgba(251, 249, 248, 0.5); /* bg-surface-bright/50 */
+    }
+    .filter-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: flex-end;
+    }
+    .filter-group {
+        width: 100%;
+    }
+    @@media (min-width: 640px) {
+        .filter-group { width: auto; }
+        .filter-input-sm { width: 7rem; } /* w-28 */
+        .filter-input-md { width: 9rem; } /* w-36 */
+        .filter-input-lg { width: 10rem; } /* w-40 */
+    }
+    .filter-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-on-surface-variant);
+        margin-bottom: 0.25rem;
+    }
+    .filter-actions {
+        display: flex;
+        align-items: flex-end;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    @@media (min-width: 640px) {
+        .filter-actions { width: auto; }
+    }
+    .filter-btn-h { height: 42px; }
+
+    /* Table Container */
+    .table-container {
+        overflow-x: auto;
+    }
+    .data-table {
+        width: 100%;
+        text-align: left;
+        border-collapse: collapse;
+    }
+    .table-head {
+        background-color: var(--color-surface-container-low);
+        color: var(--color-on-surface-variant);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .table-th {
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+    }
+    .table-th-right { text-align: right; }
+    .table-th-center { text-align: center; }
+    
+    .table-row {
+        transition: background-color 0.2s;
+        border-bottom: 1px solid var(--color-surface-container-highest);
+    }
+    .table-row:last-child { border-bottom: none; }
+    .table-row:hover { background-color: var(--color-surface-container-lowest); }
+    
+    .table-td { padding: 1rem 1.5rem; }
+    .table-td-right { text-align: right; }
+    .table-td-center { text-align: center; }
+
+    .id-text {
+        font-family: monospace;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--color-primary);
+    }
+    
+    .service-image {
+        width: 3rem;
+        height: 3rem;
+        object-fit: cover;
+        border-radius: 0.375rem;
+        background-color: var(--color-surface-container-high);
+    }
+    .service-image-placeholder {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.375rem;
+        background-color: var(--color-surface-container-high);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-on-surface-variant);
+    }
+    .service-name {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-on-surface);
+        margin: 0;
+    }
+    .service-price {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-on-surface);
+        margin: 0;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.625rem;
+        font-size: 0.625rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-radius: 9999px;
+    }
+    .status-active { background-color: var(--color-primary-container); color: var(--color-on-primary-container); }
+    .status-inactive { background-color: var(--color-error-container); color: var(--color-on-error-container); }
+    .status-default { background-color: var(--color-surface-container-highest); color: var(--color-on-surface-variant); }
+
+    .action-cell {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.25rem;
+    }
+    .action-btn {
+        padding: 0.5rem;
+        color: var(--color-on-surface-variant);
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+    }
+    .action-btn-toggle:hover {
+        color: var(--color-primary);
+        background-color: rgba(212, 163, 115, 0.2);
+    }
+    .action-btn-view:hover {
+        color: var(--color-secondary);
+        background-color: rgba(236, 226, 201, 0.2);
+    }
+    .action-btn i { width: 1rem; height: 1rem; }
+
+    .empty-state {
+        padding: 3rem;
+        text-align: center;
+        color: rgba(80, 69, 59, 0.6);
+    }
+    .empty-state i {
+        width: 3rem;
+        height: 3rem;
+        margin: 0 auto 0.75rem auto;
+        opacity: 0.4;
+        display: block;
+    }
+    .empty-state p {
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    /* Pagination */
+    .pagination-bar {
+        padding: 1rem;
+        border-top: 1px solid var(--color-surface-container-highest);
+        background-color: rgba(251, 249, 248, 0.5);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    @@media (min-width: 640px) {
+        .pagination-bar { flex-direction: row; }
+    }
+    .pagination-info {
+        font-size: 0.75rem;
+        color: var(--color-on-surface-variant);
+        margin: 0;
+    }
+    .pagination-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .pagination-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-on-surface);
+        padding: 0 0.5rem;
+    }
+
+    /* Modals */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        padding: 1rem;
+    }
+    .modal-overlay.is-visible { display: flex; }
+    
+    .modal-dialog {
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-outline-variant);
+        border-radius: 0.75rem;
+        width: 100%;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+    }
+    .modal-dialog-sm { max-width: 24rem; }
+    .modal-dialog-md { max-width: 32rem; }
+
+    .modal-header {
+        padding: 1.25rem;
+        border-bottom: 1px solid var(--color-surface-container-highest);
+        background-color: var(--color-surface-container-low);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .modal-title {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        color: var(--color-on-surface);
+        margin: 0;
+    }
+    .modal-close-btn {
+        color: var(--color-on-surface-variant);
+        transition: color 0.2s;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+    .modal-close-btn:hover { color: var(--color-on-surface); }
+    
+    .modal-body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .modal-footer {
+        padding: 1rem;
+        border-top: 1px solid var(--color-surface-container-highest);
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
+    .modal-footer-bg { background-color: rgba(251, 249, 248, 0.5); }
+
+    /* Details styling generated via JS */
+    .details-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .details-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .details-header-img {
+        width: 4rem;
+        height: 4rem;
+        object-fit: cover;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--color-outline-variant);
+    }
+    .details-header-placeholder {
+        width: 4rem;
+        height: 4rem;
+        border-radius: 0.75rem;
+        background-color: var(--color-surface-container-high);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-on-surface-variant);
+        border: 1px solid var(--color-outline-variant);
+    }
+    .details-header-text { flex: 1; }
+    .details-header-text h4 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-on-surface);
+        margin: 0 0 0.25rem 0;
+    }
+    .details-header-text p {
+        font-size: 0.75rem;
+        color: var(--color-on-surface-variant);
+        margin: 0;
+    }
+
+    .details-desc-box {
+        background-color: var(--color-surface-container-low);
+        padding: 1rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--color-surface-container-highest);
+    }
+    .details-desc-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-on-surface-variant);
+        margin: 0 0 0.5rem 0;
+    }
+    .details-desc-text {
+        font-size: 0.875rem;
+        color: var(--color-on-surface);
+        line-height: 1.625;
+        margin: 0;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+    .details-grid-item {
+        background-color: rgba(255, 255, 255, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        backdrop-filter: blur(8px);
+        padding: 1rem;
+        border-radius: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    .details-grid-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-bottom: 0.25rem;
+    }
+    .details-grid-icon-duration { color: var(--color-secondary); }
+    .details-grid-icon-price { color: var(--color-primary); }
+    .details-grid-label {
+        font-size: 0.625rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-on-surface-variant);
+        font-weight: 600;
+        margin: 0 0 0.125rem 0;
+    }
+    .details-grid-val {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--color-on-surface);
+        margin: 0;
+    }
+</style>
+
+<div class="page-wrapper" id="services-root">
+    <div class="page-header">
+        <div class="header-title-container">
+            <h2>Service Management</h2>
+            <p>Manage your studio's offerings, pricing, and active status.</p>
+        </div>
+        <a href="@Url.Action("CreateService", "MakeUp")" class="btn-primary" id="btn-add-service">
+            <i data-lucide="plus" style="width: 1rem; height: 1rem;"></i> Add New Service
+        </a>
+    </div>
+
+    <div class="glass-card" style="overflow: hidden;">
+        <!-- Search Filter Bar -->
+        <form id="search-service-form" class="filter-form">
+            <div class="filter-grid">
+                <div class="filter-group filter-input-sm">
+                    <label class="filter-label">Service ID</label>
+                    <input type="number" name="ServiceID" class="input-glow" placeholder="ID">
+                </div>
+                <div class="filter-group filter-input-md">
+                    <label class="filter-label">Name</label>
+                    <input type="text" name="Name" class="input-glow" placeholder="Service Name">
+                </div>
+                <div class="filter-group filter-input-sm">
+                    <label class="filter-label">Min Price</label>
+                    <input type="number" name="MinPrice" class="input-glow" placeholder="0.00" step="0.01">
+                </div>
+                <div class="filter-group filter-input-md">
+                    <label class="filter-label">Status</label>
+                    <select name="Status" class="input-glow">
+                        <option value="">All Statuses</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="btn-primary filter-btn-h" id="btn-search">
+                        <i data-lucide="search" style="width: 1rem; height: 1rem;"></i> Search
+                    </button>
+                    <button type="button" class="btn-ghost filter-btn-h" id="btn-reset">
+                        <i data-lucide="x" style="width: 1rem; height: 1rem;"></i> Clear
+                    </button>
+                </div>
+                <!-- Hidden pagination inputs -->
+                <input type="hidden" name="PageNumber" id="hid-page-number" value="@(Model?.PageNumber ?? 1)">
+                <input type="hidden" name="PageSize" id="hid-page-size" value="@(Model?.PageSize ?? 20)">
+            </div>
+        </form>
+
+        <!-- Table -->
+        <div class="table-container">
+            <table class="data-table" id="service-table">
+                <thead>
+                    <tr class="table-head">
+                        <th class="table-th">ID</th>
+                        <th class="table-th">Image</th>
+                        <th class="table-th">Name</th>
+                        <th class="table-th table-th-right">Price</th>
+                        <th class="table-th table-th-center">Status</th>
+                        <th class="table-th table-th-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="table-body" id="service-tbody">
+                    @if (Model != null && Model.Data != null)
+                    {
+                        foreach (var service in Model.Data)
+                        {
+                            <tr class="table-row group">
+                                <td class="table-td id-text">#@service.ServiceID</td>
+                                <td class="table-td">
+                                    @if (!string.IsNullOrEmpty(service.ImageUrl))
+                                    {
+                                        <img src="@service.ImageUrl" alt="Service Image" class="service-image" />
+                                    }
+                                    else
+                                    {
+                                        <div class="service-image-placeholder">
+                                            <i data-lucide="image"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td class="table-td">
+                                    <p class="service-name">@service.Name</p>
+                                </td>
+                                <td class="table-td table-td-right">
+                                    <p class="service-price">RM @service.Price.ToString("N2")</p>
+                                </td>
+                                <td class="table-td table-td-center">
+                                    @{
+                                        string statusClass = "status-default";
+                                        string st = service.Status?.ToString() ?? "";
+                                        if (st == "Active") { statusClass = "status-active"; }
+                                        else if (st == "Inactive") { statusClass = "status-inactive"; }
+                                    }
+                                    <span class="status-badge @statusClass">
+                                        @service.Status
+                                    </span>
+                                </td>
+                                <td class="table-td table-td-right">
+                                    <div class="action-cell">
+                                        <button class="action-btn action-btn-view btn-view-details" title="View Details" data-id="@service.ServiceID">
+                                            <i data-lucide="eye"></i>
+                                        </button>
+                                        <a href="/makeup/update-service?serviceID=@service.ServiceID" class="action-btn action-btn-view" title="Edit">
+                                            <i data-lucide="edit"></i>
+                                        </a>
+                                        <button class="action-btn action-btn-toggle btn-toggle-status" title="Toggle Status" data-id="@service.ServiceID">
+                                            <i data-lucide="refresh-cw"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr class="table-row">
+                            <td colspan="6" class="table-td">
+                                <div class="empty-state">
+                                    <i data-lucide="box"></i>
+                                    <p>No services found. Try adjusting your search filters.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Bar -->
+        @{
+            int totalCount = (int)(Model?.TotalCount ?? 0);
+            int pageNumber = (int)(Model?.PageNumber ?? 1);
+            int pageSize   = (int)(Model?.PageSize ?? 20);
+            int totalPages  = pageSize > 0 ? (int)Math.Ceiling((double)totalCount / pageSize) : 1;
+            if (totalPages < 1) totalPages = 1;
+        }
+        <div id="pagination-bar" class="pagination-bar">
+            <p class="pagination-info" id="pagination-info">
+                Showing page <span id="pag-current">@pageNumber</span> of <span id="pag-total">@totalPages</span>
+                &middot; <span id="pag-count">@totalCount</span> total records
+            </p>
+            <div class="pagination-controls">
+                <button type="button" id="btn-prev-page" class="btn-ghost" @(pageNumber <= 1 ? "disabled" : "")>
+                    <i data-lucide="chevron-left" style="width: 1rem; height: 1rem;"></i> Previous
+                </button>
+                <span class="pagination-label" id="pag-label">@pageNumber / @totalPages</span>
+                <button type="button" id="btn-next-page" class="btn-ghost" @(pageNumber >= totalPages ? "disabled" : "")>
+                    Next <i data-lucide="chevron-right" style="width: 1rem; height: 1rem;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="anti-forgery-form">@Html.AntiForgeryToken()</form>
+
+<!-- Toggle Status Modal -->
+<div id="toggleStatusModal" class="modal-overlay">
+    <div class="modal-dialog modal-dialog-sm">
+        <div class="modal-header">
+            <h3 class="modal-title">Confirm Action</h3>
+        </div>
+        <div class="modal-body">
+            <p style="font-size: 0.875rem; color: var(--color-on-surface-variant); margin: 0;">Toggle status for this service?</p>
+            <input type="hidden" id="toggle-service-id">
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="btn-cancel-toggle" class="btn-ghost">Cancel</button>
+            <button type="button" id="btn-confirm-toggle" class="btn-primary">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div id="detailsModal" class="modal-overlay">
+    <div class="modal-dialog modal-dialog-md">
+        <div class="modal-header">
+            <h3 class="modal-title">Service Details</h3>
+            <button type="button" id="btn-close-details" class="modal-close-btn">
+                <i data-lucide="x" style="width: 1.25rem; height: 1.25rem;"></i>
+            </button>
+        </div>
+        <div class="modal-body" id="details-content" style="padding: 1.5rem;">
+            <!-- Content injected dynamically via JS -->
+        </div>
+        <div class="modal-footer modal-footer-bg">
+            <button type="button" class="btn-ghost" onclick="$('#detailsModal').removeClass('is-visible')">Close</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // ── Modal helpers ──
+            function openModal(id) { $(id).addClass('is-visible'); if (typeof lucide !== 'undefined') lucide.createIcons(); }
+            function closeModal(id) { $(id).removeClass('is-visible'); }
+
+            $('#btn-cancel-toggle').on('click', function() { closeModal('#toggleStatusModal'); });
+            $('#btn-close-details').on('click', function() { closeModal('#detailsModal'); });
+            
+            // ── Search helper function ──
+            function doSearch() {
+                var $btn = $('#btn-search');
+                var originalHtml = $btn.html();
+                $btn.prop('disabled', true).html('<i data-lucide="loader" style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;"></i> Searching');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+                var qs = $('#search-service-form').serialize();
+                var searchUrl = '/makeup/services?' + qs;
+
+                $.ajax({
+                    url: searchUrl,
+                    type: 'GET',
+                    success: function(html) {
+                        var $parsed = $('<div></div>').html(html);
+                        // Update table body
+                        var newTbody = $parsed.find('#service-tbody').html();
+                        if (newTbody) {
+                            $('#service-tbody').html(newTbody);
+                        }
+                        // Update pagination info from the response
+                        var newCurrent = $parsed.find('#pag-current').text() || '1';
+                        var newTotal   = $parsed.find('#pag-total').text() || '1';
+                        var newCount   = $parsed.find('#pag-count').text() || '0';
+                        $('#pag-current').text(newCurrent);
+                        $('#pag-total').text(newTotal);
+                        $('#pag-count').text(newCount);
+                        $('#pag-label').text(newCurrent + ' / ' + newTotal);
+
+                        // Update button disabled states
+                        var cur = parseInt(newCurrent);
+                        var tot = parseInt(newTotal);
+                        $('#btn-prev-page').prop('disabled', cur <= 1);
+                        $('#btn-next-page').prop('disabled', cur >= tot);
+                        // Sync hidden page number
+                        $('#hid-page-number').val(cur);
+
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                        window.history.pushState(null, '', searchUrl);
+                    },
+                    error: function() {
+                        if (typeof window.AppToast !== 'undefined') {
+                            window.AppToast.error('Search failed. Please try again.');
+                        } else {
+                            alert('Search failed. Please try again.');
+                        }
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false).html(originalHtml);
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    }
+                });
+            }
+
+            // ── Search form submit ──
+            $('#search-service-form').on('submit', function(e) {
+                e.preventDefault();
+                $('#hid-page-number').val(1);
+                doSearch();
+            });
+
+            // ── Pagination: Previous / Next ──
+            $('#btn-prev-page').on('click', function() {
+                var current = parseInt($('#hid-page-number').val()) || 1;
+                if (current > 1) {
+                    $('#hid-page-number').val(current - 1);
+                    doSearch();
+                }
+            });
+            $('#btn-next-page').on('click', function() {
+                var current = parseInt($('#hid-page-number').val()) || 1;
+                var total = parseInt($('#pag-total').text()) || 1;
+                if (current < total) {
+                    $('#hid-page-number').val(current + 1);
+                    doSearch();
+                }
+            });
+
+            // ── Clear / Reset filters ──
+            $('#btn-reset').on('click', function() {
+                $('#search-service-form')[0].reset();
+                $('#hid-page-number').val(1);
+                doSearch();
+            });
+
+            // ── Toggle Status ──
+            $(document).on('click', '.btn-toggle-status', function() {
+                var id = $(this).data('id');
+                $('#toggle-service-id').val(id);
+                openModal('#toggleStatusModal');
+            });
+
+            $('#btn-confirm-toggle').on('click', function() {
+                var id = $('#toggle-service-id').val();
+                var $btn = $(this);
+                var originalHtml = $btn.html();
+                $btn.prop('disabled', true).html('<i data-lucide="loader" style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;"></i>');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+                $.ajax({
+                    url: '/makeup/toggle-status/' + id,
+                    type: 'POST',
+                    headers: { 'RequestVerificationToken': $('#anti-forgery-form input').val() },
+                    success: function(res) {
+                        if(res.success) {
+                            if (typeof window.AppToast !== 'undefined') {
+                                window.AppToast.success(res.message || 'Status updated.');
+                            }
+                            closeModal('#toggleStatusModal');
+                            doSearch(); // Reload the table data
+                        }
+                        else {
+                            if (typeof window.AppToast !== 'undefined') {
+                                window.AppToast.error(res.message || 'Error updating status.');
+                            } else {
+                                alert(res.message || 'Error updating status');
+                            }
+                        }
+                    },
+                    error: function() {
+                        if (typeof window.AppToast !== 'undefined') {
+                            window.AppToast.error('Server error.');
+                        } else {
+                            alert('Server error');
+                        }
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false).html(originalHtml);
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    }
+                });
+            });
+
+            // ── View Details ──
+            $(document).on('click', '.btn-view-details', function() {
+                var id = $(this).data('id');
+                if (!id) return;
+
+                // Show modal with loading state
+                $('#details-content').html('<div class="empty-state"><i data-lucide="loader" style="animation: spin 1s linear infinite; width: 2rem; height: 2rem; color: var(--color-primary);"></i><p style="margin-top: 0.5rem;">Loading details...</p></div>');
+                openModal('#detailsModal');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+                $.ajax({
+                    url: '/makeup/details/' + id,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        // Support PascalCase or camelCase
+                        var d = {
+                            id: data.serviceID ?? data.ServiceID ?? '',
+                            name: data.name ?? data.Name ?? 'N/A',
+                            desc: data.description ?? data.Description ?? 'No description provided.',
+                            img: data.imageUrl ?? data.ImageUrl,
+                            price: parseFloat(data.price ?? data.Price ?? 0).toFixed(2),
+                            duration: data.estimatedDurationMinutes ?? data.EstimatedDurationMinutes ?? 0,
+                            status: data.status ?? data.Status ?? 'N/A'
+                        };
+
+                        var statusBadge = '';
+                        if (d.status === "Active") { 
+                            statusBadge = '<span class="status-badge status-active">' + d.status + '</span>'; 
+                        } else { 
+                            statusBadge = '<span class="status-badge status-inactive">' + d.status + '</span>'; 
+                        }
+
+                        var imgHtml = '';
+                        if (d.img) {
+                            imgHtml = '<img src="' + d.img + '" alt="Service Image" class="details-header-img" />';
+                        } else {
+                            imgHtml = '<div class="details-header-placeholder"><i data-lucide="image" style="width: 1.5rem; height: 1.5rem;"></i></div>';
+                        }
+
+                        var html = '<div class="details-wrapper">';
+                        // Header
+                        html += '<div class="details-header">';
+                        html += imgHtml;
+                        html += '  <div class="details-header-text">';
+                        html += '    <h4>' + d.name + '</h4>';
+                        html += '    <p>Service ID: #' + d.id + '</p>';
+                        html += '  </div>';
+                        html += '  <div>' + statusBadge + '</div>';
+                        html += '</div>';
+
+                        // Description
+                        html += '<div class="details-desc-box">';
+                        html += '  <h5 class="details-desc-label">Description</h5>';
+                        html += '  <p class="details-desc-text">' + d.desc + '</p>';
+                        html += '</div>';
+
+                        // Details Grid
+                        html += '<div class="details-grid">';
+                        html += '  <div class="details-grid-item">';
+                        html += '    <i data-lucide="clock" class="details-grid-icon details-grid-icon-duration"></i>';
+                        html += '    <p class="details-grid-label">Duration</p>';
+                        html += '    <p class="details-grid-val">' + d.duration + ' mins</p>';
+                        html += '  </div>';
+                        html += '  <div class="details-grid-item">';
+                        html += '    <i data-lucide="tag" class="details-grid-icon details-grid-icon-price"></i>';
+                        html += '    <p class="details-grid-label">Price</p>';
+                        html += '    <p class="details-grid-val">RM ' + d.price + '</p>';
+                        html += '  </div>';
+                        html += '</div>';
+                        html += '</div>';
+
+                        $('#details-content').html(html);
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    },
+                    error: function(xhr) {
+                        var errHtml = '<div class="empty-state">';
+                        errHtml += '<i data-lucide="alert-triangle" style="color: var(--color-error); opacity: 1;"></i>';
+                        errHtml += '<p>Failed to load service details.</p>';
+                        errHtml += '<p style="font-size: 0.75rem; margin-top: 0.25rem;">Error: ' + xhr.status + ' ' + (xhr.statusText || '') + '</p>';
+                        errHtml += '</div>';
+                        $('#details-content').html(errHtml);
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    }
+                });
+            });
+            
+            $("<style type='text/css'>@@    keyframes spin { 100% { transform: rotate(360deg); } } </style>").appendTo("head");
+        });
+    </script>
+}

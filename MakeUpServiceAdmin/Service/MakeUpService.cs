@@ -32,11 +32,22 @@ namespace MakeUpServiceAdmin.Service
             if (response.IsSuccessStatusCode)
             {
                 var services = await response.Content.ReadFromJsonAsync<PaginatedResponse<ServiceDto>>();
-                return services;
+                return services ?? new PaginatedResponse<ServiceDto> { Data = new List<ServiceDto>() };
+            }
+
+            return new PaginatedResponse<ServiceDto> { Data = new List<ServiceDto>() };
+        }
+        public async Task<List<ServiceDto>> GetAllActiveService()
+        {
+            var response = await _httpClient.GetAsync("api/admin/services/active-services");
+            if (response.IsSuccessStatusCode)
+            {
+                var services = await response.Content.ReadFromJsonAsync<List<ServiceDto>>();
+                return services ?? new List<ServiceDto>();
             }
             else
             {
-                return new PaginatedResponse<ServiceDto>();
+                return new List<ServiceDto>();
             }
         }
         public async Task<ServiceDetailsDto> GetServiceDetailsAsync(int id)
@@ -56,14 +67,25 @@ namespace MakeUpServiceAdmin.Service
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "api/admin/services/create");
             request.Headers.Add("X-Idempotency-Key", idempotencyKey);
-            request.Content = new MultipartFormDataContent
+            var content = new MultipartFormDataContent
             {
                 {new StringContent(model.Name), "Name" },
-                {new StringContent(model.Description), "Description" },
+                //{new StringContent(model.Description), "Description" },
                 {new StringContent(model.Price.Value.ToString()), "Price" },
                 {new StringContent(model.EstimatedDurationMinutes.Value.ToString()), "EstimatedDurationMinutes" },
-                {new StreamContent(model.ImageUrl.OpenReadStream()), "ImageUrl", model.ImageUrl.FileName },
+                //{new StreamContent(model.ImageUrl.OpenReadStream()), "ImageUrl", model.ImageUrl.FileName },
             };
+            if(!string.IsNullOrWhiteSpace(model.Description) && model.Description.ToLower() != "string")
+            {
+                content.Add(new StringContent(model.Description), "Description");
+            }
+            if (model.ImageUrl != null)
+            {
+                var imageContent = new StreamContent(model.ImageUrl.OpenReadStream());
+                content.Add(imageContent, "ImageUrl", model.ImageUrl.FileName);
+            }
+
+            request.Content = content;
 
             var response = await _httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
@@ -74,7 +96,7 @@ namespace MakeUpServiceAdmin.Service
             else
             {
                 var errorResponse = await response.Content.ReadFromJsonAsync<ApiResponse>();
-                return (false, errorResponse.Error ?? "Failed to create service");
+                return (false, errorResponse.Message ?? "Failed to create service");
             }
         }
         public async Task<(bool IsSuccess, string Message)> UpdateServiceAsync(UpdateServiceVm model)
@@ -84,11 +106,11 @@ namespace MakeUpServiceAdmin.Service
             {
                 {new StringContent(model.ServiceID.ToString()), "ServiceID" }
             };
-            if(!string.IsNullOrEmpty(model.Name))
+            if (!string.IsNullOrEmpty(model.Name))
             {
                 content.Add(new StringContent(model.Name), "Name");
             }
-            if(!string.IsNullOrEmpty(model.Description))
+            if (!string.IsNullOrEmpty(model.Description))
             {
                 content.Add(new StringContent(model.Description), "Description");
             }
@@ -96,11 +118,11 @@ namespace MakeUpServiceAdmin.Service
             {
                 content.Add(new StringContent(model.Price.Value.ToString()), "Price");
             }
-            if(model.EstimatedDurationMinutes.HasValue)
+            if (model.EstimatedDurationMinutes.HasValue)
             {
                 content.Add(new StringContent(model.EstimatedDurationMinutes.Value.ToString()), "EstimatedDurationMinutes");
             }
-            if(model.ImageUrl != null)
+            if (model.ImageUrl != null)
             {
                 content.Add(new StreamContent(model.ImageUrl.OpenReadStream()), "ImageUrl", model.ImageUrl.FileName);
             }
@@ -109,7 +131,7 @@ namespace MakeUpServiceAdmin.Service
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadFromJsonAsync<ApiResponse>();
-                return(true, responseContent.Message ?? "Service updated successfully");
+                return (true, responseContent.Message ?? "Service updated successfully");
             }
             else
             {
@@ -123,12 +145,12 @@ namespace MakeUpServiceAdmin.Service
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadFromJsonAsync<ApiResponse>();
-                return(true, responseContent.Message);
+                return (true, responseContent.Message);
             }
             else
             {
                 var errorResponse = await response.Content.ReadFromJsonAsync<ApiResponse>();
-                return (false, errorResponse.Error);
+                return (false, errorResponse.Message);
             }
         }
     }

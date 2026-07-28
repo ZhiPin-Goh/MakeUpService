@@ -22,19 +22,19 @@ namespace MakeUpServiceAdmin.Controllers
             return View(result);
         }
         // Use pop up modal to show feedback details and resolve feedback
-        [HttpGet("details")]
-        public async Task<IActionResult> FeedbackDetails(int feedBackID)
+        [HttpGet("feedback/details/{feedbackID}")]
+        public async Task<IActionResult> FeedbackDetails(int feedbackID)
         {
-            if(feedBackID <= 0)
+            if(feedbackID <= 0)
             {
                 ViewBag.ErrorMessage = "Invalid feedback ID.";
                 return View();
             }
-            var result = await _services.GetFeedbackDetailsAsync(feedBackID);
+            var result = await _services.GetFeedbackDetailsAsync(feedbackID);
             return View(result);
         }
         // Open the details run the resolve feedback function, and return the result to the modal
-        [HttpPost("resolve")]
+        [HttpPost("feedback/resolve")]
         public async Task<IActionResult> FeedbackResolve(int feedbackID)
         {
             if (feedbackID <= 0)

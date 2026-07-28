@@ -1,0 +1,273 @@
+@using MakeUpServiceAdmin.DTO.FeedbackDto
+@model FeedbackDetailsDto
+@{
+    ViewData["Title"] = "Feedback Details";
+}
+
+<style>
+    .details-page-wrapper {
+        max-width: 42rem;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .details-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .back-btn {
+        padding: 0.5rem;
+        background-color: var(--color-surface);
+        color: var(--color-on-surface-variant);
+        border-radius: 0.5rem;
+        border: 1px solid var(--color-outline-variant);
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .back-btn:hover {
+        background-color: var(--color-surface-container);
+        color: var(--color-on-surface);
+    }
+    .details-header h2 {
+        font-size: 1.5rem;
+        color: var(--color-on-background);
+        margin: 0;
+    }
+
+    .details-card {
+        padding: 2rem;
+    }
+
+    .details-card-header {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--color-surface-container-highest);
+        gap: 1rem;
+    }
+    @@media (min-width: 640px) {
+        .details-card-header {
+            flex-direction: row;
+            align-items: center;
+        }
+    }
+    .feedback-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-on-surface);
+        margin: 0;
+    }
+    .feedback-date {
+        font-size: 0.875rem;
+        color: var(--color-on-surface-variant);
+        margin-top: 0.25rem;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        border-radius: 9999px;
+    }
+    .status-resolved { 
+        background-color: rgba(34, 197, 94, 0.1); 
+        color: rgb(34, 197, 94); 
+    }
+    .status-pending { 
+        background-color: rgba(234, 179, 8, 0.1); 
+        color: rgb(234, 179, 8); 
+    }
+
+    .customer-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        background-color: var(--color-surface-container-low);
+        padding: 1rem;
+        border-radius: 0.75rem;
+        border: 1px solid rgba(212, 196, 183, 0.3); /* outline-variant/30 */
+        margin-top: 1.5rem;
+    }
+    @@media (min-width: 640px) {
+        .customer-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .info-section {
+        display: flex;
+        flex-direction: column;
+    }
+    .info-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-on-surface-variant);
+        margin-bottom: 0.25rem;
+    }
+    .info-value-row {
+        font-size: 0.875rem;
+        color: var(--color-on-surface);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.375rem;
+    }
+    .info-icon {
+        width: 1rem;
+        height: 1rem;
+        color: var(--color-primary);
+    }
+
+    .feedback-content-section {
+        margin-top: 1.5rem;
+    }
+    .feedback-content-box {
+        background-color: var(--color-surface);
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--color-surface-container-highest);
+        font-size: 0.875rem;
+        color: var(--color-on-surface);
+        line-height: 1.625;
+        white-space: pre-wrap;
+    }
+
+    .details-footer {
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-surface-container-highest);
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+</style>
+
+<div class="details-page-wrapper">
+    <div class="details-header">
+        <a href="@Url.Action("Feedback", "Feedback")" class="back-btn">
+            <i data-lucide="arrow-left" style="width: 1.25rem; height: 1.25rem;"></i>
+        </a>
+        <h2>Feedback Details</h2>
+    </div>
+
+    <div class="glass-card details-card">
+        @if (Model != null)
+        {
+            <!-- Header with Status Badge -->
+            <div class="details-card-header">
+                <div>
+                    <h3 class="feedback-title">@Model.Title</h3>
+                    <div class="feedback-date">Submitted on @Model.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt")</div>
+                </div>
+                @if (Model.IsResolved.ToLower() == "true" || Model.IsResolved.ToLower() == "yes" || Model.IsResolved == "1" || Model.IsResolved.ToLower() == "resolved")
+                {
+                    <span class="status-badge status-resolved">
+                        <i data-lucide="check-circle" style="width: 1rem; height: 1rem;"></i> Resolved
+                    </span>
+                }
+                else
+                {
+                    <span class="status-badge status-pending">
+                        <i data-lucide="clock" style="width: 1rem; height: 1rem;"></i> Pending
+                    </span>
+                }
+            </div>
+
+            <!-- Customer Details -->
+            <div class="customer-grid">
+                <div class="info-section">
+                    <span class="info-label">Customer Name</span>
+                    <div class="info-value-row">
+                        <i data-lucide="user" class="info-icon"></i> @Model.Name
+                    </div>
+                </div>
+                <div class="info-section">
+                    <span class="info-label">Contact Info</span>
+                    <div class="info-value-row">
+                        <i data-lucide="phone" class="info-icon"></i> @Model.ContactNumber
+                    </div>
+                    <div class="info-value-row">
+                        <i data-lucide="mail" class="info-icon"></i> @Model.Email
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="feedback-content-section">
+                <span class="info-label" style="margin-bottom: 0.75rem;">Feedback Details</span>
+                <div class="feedback-content-box">@Model.Description</div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="details-footer">
+                @if (!(Model.IsResolved.ToLower() == "true" || Model.IsResolved.ToLower() == "yes" || Model.IsResolved == "1" || Model.IsResolved.ToLower() == "resolved"))
+                {
+                    <button type="button" id="btn-resolve-feedback" data-id="@Model.FeedbackID" class="btn-primary" style="display: flex; items-center; gap: 0.5rem;">
+                        <i data-lucide="check" style="width: 1rem; height: 1rem;"></i> Mark as Resolved
+                    </button>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#btn-resolve-feedback').on('click', function() {
+                var id = $(this).data('id');
+                var $btn = $(this);
+                var originalHtml = $btn.html();
+                
+                $btn.prop('disabled', true).html('<i data-lucide="loader" style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;"></i> Resolving...');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+                $.ajax({
+                    url: '/feedback/resolve',
+                    type: 'POST',
+                    data: { feedbackID: id },
+                    success: function(res) {
+                        if(res.success) {
+                            if (typeof window.AppToast !== 'undefined') {
+                                window.AppToast.success('Feedback marked as resolved!');
+                            }
+                            setTimeout(function() { window.location.reload(); }, 1000);
+                        } else {
+                            if (typeof window.AppToast !== 'undefined') {
+                                window.AppToast.error(res.message || 'Error resolving feedback.');
+                            } else {
+                                alert(res.message || 'Error resolving feedback.');
+                            }
+                            $btn.prop('disabled', false).html(originalHtml);
+                            if (typeof lucide !== 'undefined') lucide.createIcons();
+                        }
+                    },
+                    error: function() {
+                        if (typeof window.AppToast !== 'undefined') {
+                            window.AppToast.error('Server error.');
+                        } else {
+                            alert('Server error.');
+                        }
+                        $btn.prop('disabled', false).html(originalHtml);
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    }
+                });
+            });
+        });
+    </script>
+}

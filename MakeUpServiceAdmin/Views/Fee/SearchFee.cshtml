@@ -1,0 +1,541 @@
+@{
+    ViewData["Title"] = "Travel Fee Calculator";
+}
+
+<style>
+    .page-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+    .page-header h2 {
+        font-size: 1.875rem;
+        font-family: var(--font-display);
+        color: var(--color-on-background);
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+    }
+    .page-header p {
+        font-size: 0.875rem;
+        color: var(--color-on-surface-variant);
+        margin: 0;
+    }
+
+    .calculator-layout {
+        display: grid;
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        gap: 2rem;
+    }
+    @@media (min-width: 1024px) {
+        .calculator-layout {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    /* Left Column */
+    .calculator-form-card {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    .form-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border-bottom: 1px solid var(--color-surface-container-highest);
+        padding-bottom: 1.5rem;
+    }
+    .form-header-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 9999px;
+        background-color: rgba(212, 163, 115, 0.1); /* primary/10 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-primary);
+        flex-shrink: 0;
+    }
+    .form-header-text h3 {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--color-on-surface);
+        margin: 0;
+    }
+    .form-header-text p {
+        font-size: 0.75rem;
+        color: var(--color-on-surface-variant);
+        margin: 0.25rem 0 0 0;
+    }
+
+    .calc-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .form-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-on-surface-variant);
+    }
+
+    .input-with-icon-wrapper {
+        position: relative;
+    }
+    .input-icon-left {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-on-surface-variant);
+        z-index: 10;
+    }
+    .input-icon-right {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-on-surface-variant);
+        pointer-events: none;
+    }
+    .input-with-icon {
+        padding-left: 2.5rem !important; /* !pl-10 */
+        background-color: var(--color-surface-container-lowest);
+    }
+
+    .select-custom {
+        appearance: none;
+        background-color: var(--color-surface-container-lowest);
+    }
+
+    .divider-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0;
+    }
+    .divider-line {
+        flex-grow: 1;
+        border-top: 1px solid var(--color-surface-container-highest);
+    }
+    .divider-text {
+        flex-shrink: 0;
+        margin: 0 1rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: rgba(80, 69, 59, 0.6); /* on-surface-variant/60 */
+        text-transform: uppercase;
+    }
+
+    .autocomplete-dropdown {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        margin-top: 0.25rem;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-surface-container-highest);
+        border-radius: 0.75rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow-y: auto;
+        max-height: 15rem;
+        z-index: 50;
+        display: none;
+        list-style: none;
+        padding: 0;
+    }
+    .autocomplete-dropdown.is-visible {
+        display: block;
+    }
+    .autocomplete-item {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        color: var(--color-on-surface);
+        cursor: pointer;
+        transition: background-color 0.2s;
+        border-bottom: 1px solid var(--color-surface-container-highest);
+    }
+    .autocomplete-item:last-child {
+        border-bottom: none;
+    }
+    .autocomplete-item:hover {
+        background-color: var(--color-surface-container-highest);
+    }
+
+    .btn-submit-calc {
+        width: 100%;
+        margin-top: 1rem;
+        padding: 0.75rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Right Column */
+    .results-column {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .map-container {
+        flex: 1;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .map-placeholder {
+        text-align: center;
+        color: rgba(80, 69, 59, 0.5);
+        transition: opacity 0.3s;
+    }
+    .map-placeholder-icon {
+        width: 3rem;
+        height: 3rem;
+        margin: 0 auto 0.75rem auto;
+        opacity: 0.6;
+    }
+    .map-placeholder p {
+        font-size: 0.875rem;
+        margin: 0;
+    }
+    .map-iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        opacity: 0;
+        transition: opacity 0.5s;
+        display: none;
+    }
+    .map-iframe.is-visible {
+        display: block;
+        opacity: 1;
+    }
+
+    .summary-box {
+        padding: 1.5rem;
+        border-top: 4px solid var(--color-primary);
+    }
+    .summary-title {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--color-on-surface-variant);
+        text-transform: uppercase;
+        margin: 0 0 1.5rem 0;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--color-surface-container-highest);
+    }
+    .summary-row-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-on-surface);
+    }
+    .summary-row-val {
+        font-size: 0.875rem;
+        color: var(--color-on-surface-variant);
+    }
+    .summary-row-val-mono {
+        font-family: monospace;
+    }
+    .summary-row-val-med {
+        font-weight: 500;
+    }
+
+    .summary-total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding-top: 0.5rem;
+    }
+    .summary-total-label {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-on-surface);
+    }
+    .summary-total-val {
+        font-size: 1.875rem;
+        font-family: var(--font-display);
+        color: var(--color-primary);
+        font-weight: 700;
+        line-height: 1;
+    }
+</style>
+
+<div class="page-wrapper" id="fee-calc-root">
+    <div class="page-header">
+        <h2>Travel Fee Calculator</h2>
+        <p>Estimate travel costs based on client location and distance from the studio.</p>
+    </div>
+
+    <div class="calculator-layout">
+        <!-- Left Column: Form -->
+        <div class="glass-card calculator-form-card">
+            <div class="form-header">
+                <div class="form-header-icon">
+                    <i data-lucide="navigation" style="width: 1.5rem; height: 1.5rem;"></i>
+                </div>
+                <div class="form-header-text">
+                    <h3>Client Location</h3>
+                    <p>Enter address to calculate travel zone fee.</p>
+                </div>
+            </div>
+
+            <form id="form-fee-calc" class="calc-form">
+                <div class="form-group">
+                    <label class="form-label">Service Area (Optional)</label>
+                    <div class="input-with-icon-wrapper">
+                        <i data-lucide="map" class="input-icon-left" style="width: 1rem; height: 1rem;"></i>
+                        <select id="AreaID" name="AreaID" class="input-glow select-custom input-with-icon w-full">
+                            <option value="">Select a predefined area...</option>
+                            <!-- Dynamically loaded -->
+                        </select>
+                        <i data-lucide="chevron-down" class="input-icon-right" style="width: 1rem; height: 1rem;"></i>
+                    </div>
+                </div>
+
+                <div class="divider-container">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">OR</span>
+                    <div class="divider-line"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Destination Address</label>
+                    <div class="input-with-icon-wrapper" id="autocomplete-container">
+                        <i data-lucide="map-pin" class="input-icon-left" style="width: 1rem; height: 1rem;"></i>
+                        <input type="text" id="ClientAddress" name="ClientAddress" autocomplete="off" class="input-glow input-with-icon w-full relative z-10" placeholder="e.g. 123 Beverly Hills Blvd, CA" required>
+                        <!-- Custom Dropdown -->
+                        <ul id="custom-location-suggestions" class="autocomplete-dropdown">
+                            <!-- Populated via AJAX -->
+                        </ul>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-calc" class="btn-primary btn-submit-calc">
+                    <i data-lucide="calculator" style="width: 1rem; height: 1rem;"></i> Calculate Estimate
+                </button>
+            </form>
+        </div>
+
+        <!-- Right Column: Output -->
+        <div class="results-column">
+            <!-- Map Container -->
+            <div class="glass-card map-container">
+                <!-- Placeholder -->
+                <div id="map-placeholder" class="map-placeholder">
+                    <i data-lucide="globe" class="map-placeholder-icon"></i>
+                    <p>Map visualization will appear when a destination is entered.</p>
+                </div>
+                <!-- Iframe Map -->
+                <iframe id="map-iframe" class="map-iframe" loading="lazy" allowfullscreen></iframe>
+            </div>
+
+            <!-- Estimate Summary -->
+            <div class="glass-card summary-box">
+                <h4 class="summary-title">Estimate Summary</h4>
+                
+                <div>
+                    <div class="summary-row">
+                        <span class="summary-row-label">Estimated Distance</span>
+                        <span id="summary-distance" class="summary-row-val summary-row-val-mono">--</span>
+                    </div>
+                    
+                    <div class="summary-row" style="border-bottom: none;">
+                        <span class="summary-row-label">Travel Zone</span>
+                        <span id="summary-zone" class="summary-row-val summary-row-val-med">--</span>
+                    </div>
+
+                    <div class="summary-total-row" style="border-top: 1px solid var(--color-surface-container-highest); padding-top: 1rem;">
+                        <span class="summary-total-label">Total Travel Fee</span>
+                        <span id="summary-fee" class="summary-total-val">RM 0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // 1. Populate Areas Dropdown
+            $.ajax({
+                url: '/api/areas/list',
+                type: 'GET',
+                success: function(res) {
+                    if (res && res.length) {
+                        var $select = $('#AreaID');
+                        res.forEach(function(area) {
+                            $select.append($('<option></option>').attr('value', area.areaID || area.AreaID).text((area.name || area.Name) + ' (RM ' + (area.basePrice || area.BasePrice) + ')'));
+                        });
+                    }
+                }
+            });
+
+            // 2. Debounce Location Autocomplete
+            var typingTimer;
+            var doneTypingInterval = 400; // 400ms
+            var $input = $('#ClientAddress');
+            var $suggestions = $('#custom-location-suggestions');
+
+            $input.on('keyup', function (e) {
+                // Ignore arrow keys and enter
+                if ([38, 40, 13].includes(e.keyCode)) return;
+                
+                clearTimeout(typingTimer);
+                if ($input.val().length > 3) {
+                    typingTimer = setTimeout(doneTyping, doneTypingInterval);
+                } else {
+                    $suggestions.removeClass('is-visible');
+                }
+            });
+
+            $input.on('keydown', function (e) {
+                clearTimeout(typingTimer);
+            });
+
+            // Hide suggestions when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#autocomplete-container').length) {
+                    $suggestions.removeClass('is-visible');
+                }
+            });
+            
+            // Handle clicking a suggestion
+            $(document).on('click', '.autocomplete-item', function() {
+                $input.val($(this).text());
+                $suggestions.removeClass('is-visible');
+            });
+
+            function doneTyping () {
+                var query = $input.val();
+                $.ajax({
+                    url: '/fee/searchlocation', // Ensure this maps to the correct endpoint serving the LocationIQ data
+                    type: 'GET',
+                    data: { query: query },
+                    success: function(res) {
+                        $suggestions.empty();
+                        try {
+                            var data = typeof res === 'string' ? JSON.parse(res) : res;
+                            if(data && Array.isArray(data) && data.length > 0) {
+                                data.forEach(function(item) {
+                                    // LocationIQ uses display_name or display_address
+                                    var val = item.display_name || item.display_address || item.description || item.address || item;
+                                    var $li = $('<li></li>')
+                                        .addClass('autocomplete-item')
+                                        .text(val);
+                                    $suggestions.append($li);
+                                });
+                                $suggestions.addClass('is-visible');
+                            } else {
+                                $suggestions.removeClass('is-visible');
+                            }
+                        } catch (e) { 
+                            console.error('Error parsing location data', e);
+                            $suggestions.removeClass('is-visible');
+                        }
+                    },
+                    error: function() {
+                        $suggestions.removeClass('is-visible');
+                    }
+                });
+            }
+
+            // 3. Handle Form Submit
+            $('#form-fee-calc').on('submit', function(e) {
+                e.preventDefault();
+                
+                var areaIdStr = $('#AreaID').val();
+                var address = $('#ClientAddress').val();
+
+                if (!address) {
+                    if (typeof window.AppToast !== 'undefined') window.AppToast.error('Please enter a destination address.');
+                    else alert('Please enter a destination address.');
+                    return;
+                }
+
+                var payload = {
+                    AreaID: areaIdStr ? parseInt(areaIdStr) : null,
+                    ClientAddress: address
+                };
+
+                var $btn = $('#btn-calc');
+                var originalHtml = $btn.html();
+                $btn.prop('disabled', true).html('<i data-lucide="loader" style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;"></i> Calculating...');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+                $.ajax({
+                    url: '/fee/calculate-travel-fee',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(payload),
+                    success: function(res) {
+                        if (res.isSuccess || res.isSuccess === undefined) { // Handle potential casing differences
+                            // Update Summary
+                            var distance = res.distanceKm || res.DistanceKm || 0;
+                            $('#summary-distance').text(distance.toFixed(2) + ' km');
+                            
+                            var zoneText = areaIdStr ? $('#AreaID option:selected').text().split(' (')[0] : 'Custom Distance';
+                            $('#summary-zone').text(zoneText);
+                            
+                            var fee = res.travelFee || res.TravelFee || 0;
+                            $('#summary-fee').text('RM ' + fee.toFixed(2));
+
+                            // Update Map if address is provided
+                            if (address) {
+                                var mapUrl = 'https://maps.google.com/maps?q=' + encodeURIComponent(address) + '&output=embed';
+                                $('#map-iframe').attr('src', mapUrl).addClass('is-visible');
+                                $('#map-placeholder').css('display', 'none');
+                            }
+
+//                            if (typeof window.AppToast !== 'undefined') window.AppToast.success('Estimate calculated successfully.');
+                        } else {
+                            if (typeof window.AppToast !== 'undefined') window.AppToast.error(res.message || res.Message || 'Error calculating fee.');
+                            else alert(res.message || res.Message || 'Error calculating fee.');
+                        }
+                    },
+                    error: function() {
+                        if (typeof window.AppToast !== 'undefined') window.AppToast.error('Server error.');
+                        else alert('Server error.');
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false).html(originalHtml);
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    }
+                });
+            });
+            
+            $("<style type='text/css'>@@keyframes spin { 100% { transform: rotate(360deg); } } </style>").appendTo("head");
+        });
+    </script>
+}

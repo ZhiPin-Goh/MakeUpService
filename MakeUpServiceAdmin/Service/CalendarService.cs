@@ -1,4 +1,4 @@
-﻿using MakeUpServiceAdmin.DTO.CalendarDto;
+using MakeUpServiceAdmin.DTO.CalendarDto;
 using MakeUpServiceAdmin.ViewModel.CalendarVm;
 
 namespace MakeUpServiceAdmin.Service
@@ -12,7 +12,10 @@ namespace MakeUpServiceAdmin.Service
         }
         public async Task<List<CalendarEventDto>> CalendarEventAsync(SelectDateVm model)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/admin/calendar/get-calendar", model);
+            var startStr = model.Start.ToString("yyyy-MM-dd");
+            var endStr = model.End.ToString("yyyy-MM-dd");
+            var response = await _httpClient.GetAsync($"api/admin/calendar/get-calendar?Start={startStr}&End={endStr}");
+            
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<List<CalendarEventDto>>();

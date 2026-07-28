@@ -1,0 +1,182 @@
+@using MakeUpServiceAdmin.ViewModel.SettingVm
+@model dynamic
+@{
+    ViewData["Title"] = "Setting Details";
+}
+
+<style>
+    .details-page-wrapper {
+        max-width: 42rem;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .details-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .back-btn {
+        padding: 0.5rem;
+        background-color: var(--color-surface);
+        color: var(--color-on-surface-variant);
+        border-radius: 0.5rem;
+        border: 1px solid var(--color-outline-variant);
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .back-btn:hover {
+        background-color: var(--color-surface-container);
+        color: var(--color-on-surface);
+    }
+    .details-header h2 {
+        font-size: 1.5rem;
+        color: var(--color-on-background);
+        margin: 0;
+    }
+
+    .details-card {
+        padding: 2rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(212, 196, 183, 0.5);
+    }
+
+    .setting-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .key-info-box {
+        background-color: var(--color-surface-container-low);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(212, 196, 183, 0.5);
+    }
+    .form-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-on-surface-variant);
+        margin-bottom: 0.5rem;
+    }
+    .key-value {
+        font-size: 1.125rem;
+        font-weight: 700;
+        font-family: monospace;
+        color: var(--color-on-surface);
+        margin: 0;
+    }
+    .key-help-text {
+        font-size: 0.75rem;
+        color: var(--color-on-surface-variant);
+        margin: 0.25rem 0 0 0;
+    }
+
+    .value-input-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+    }
+    .value-textarea {
+        width: 100%;
+        resize: none;
+        font-family: monospace;
+        min-height: 6rem;
+    }
+
+    .form-footer {
+        padding-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        border-top: 1px solid var(--color-surface-container-highest);
+    }
+</style>
+
+<div class="details-page-wrapper">
+    <div class="details-header">
+        <a href="@Url.Action("GetSettings", "Setting")" class="back-btn">
+            <i data-lucide="arrow-left" style="width: 1.25rem; height: 1.25rem;"></i>
+        </a>
+        <h2>Setting Details</h2>
+    </div>
+
+    <div class="glass-card details-card">
+        <form id="standalone-update-setting" class="setting-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="Key" value="@Model?.Key" />
+            
+            <div class="key-info-box">
+                <label class="form-label">Configuration Key</label>
+                <div class="key-value">@Model?.Key</div>
+                <p class="key-help-text">The unique identifier for this parameter.</p>
+            </div>
+
+            <div class="value-input-section">
+                <label class="form-label">Configuration Value</label>
+                <textarea id="Value" name="Value" class="input-glow value-textarea" rows="4">@Model?.Value</textarea>
+            </div>
+            
+            <div class="value-input-section">
+                <label class="form-label">Description</label>
+                <textarea id="Description" name="Description" class="input-glow value-textarea" rows="4">@Model?.Description</textarea>
+            </div>
+            <div class="form-footer">
+                <a href="@Url.Action("GetSettings", "Setting")" class="btn-ghost">Back</a>
+                <button type="submit" class="btn-primary" id="btn-update">Update Setting</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#standalone-update-setting').on('submit', function(e) {
+                e.preventDefault();
+                
+                var payload = {
+                    Key: $('#Key').val(),
+                    Value: $('#Value').val(),
+                    Description: $('#Description').val()
+                };
+                
+                var $btn = $('#btn-update');
+                var originalText = $btn.text();
+                $btn.prop('disabled', true).html('<i data-lucide="loader" style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;"></i> Updating...');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+                
+                $.ajax({
+                    url: '/settings/update',
+                    type: 'POST',
+                    data: JSON.stringify(payload),
+                    contentType: 'application/json',
+                    headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+                    success: function(res) {
+                        if(res.success) {
+                            if (typeof window.AppToast !== 'undefined') window.AppToast.success(res.message || "Setting updated successfully.");
+                            setTimeout(function(){ window.location.href = '@Url.Action("GetSettings", "Setting")'; }, 1000);
+                        } else {
+                            if (typeof window.AppToast !== 'undefined') window.AppToast.error(res.message || 'Failed to update setting.');
+                            else alert(res.message || 'Failed to update setting.');
+                            $btn.prop('disabled', false).text(originalText);
+                        }
+                    },
+                    error: function(xhr) {
+                        if (typeof window.AppToast !== 'undefined') window.AppToast.error('An error occurred. Code: ' + xhr.status);
+                        else alert('An error occurred. Code: ' + xhr.status);
+                        $btn.prop('disabled', false).text(originalText);
+                    }
+                });
+            });
+        });
+    </script>
+}

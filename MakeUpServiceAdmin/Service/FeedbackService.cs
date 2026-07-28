@@ -27,7 +27,7 @@ namespace MakeUpServiceAdmin.Service
             queryParams.Add($"pageSize={model.PageSize}");
 
             var queryString = queryParams.Any() ? "?" + string.Join("&", queryParams) : "";
-            var response = await _httpClient.PostAsync($"admin/feedback/search{queryString}", null);
+            var response = await _httpClient.PostAsync($"api/admin/feedback/search{queryString}", null);
             if (response.IsSuccessStatusCode)
             {
                 var paginatedResponse = await response.Content.ReadFromJsonAsync<PaginatedResponse<FeedbackSummaryDto>>();
@@ -39,9 +39,9 @@ namespace MakeUpServiceAdmin.Service
                 return new PaginatedResponse<FeedbackSummaryDto>();
             }
         }
-        public async Task<FeedbackDetailsDto> GetFeedbackDetailsAsync(int feedbackIID)
+        public async Task<FeedbackDetailsDto> GetFeedbackDetailsAsync(int feedbackID)
         {
-            var response = await _httpClient.GetAsync($"admin/feedback/resolve/{feedbackIID}");
+            var response = await _httpClient.GetAsync($"api/admin/feedback/details/{feedbackID}");
             if (response.IsSuccessStatusCode)
             {
                 var feedbackDetails = await response.Content.ReadFromJsonAsync<FeedbackDetailsDto>();
@@ -49,12 +49,12 @@ namespace MakeUpServiceAdmin.Service
             }
             else
             {
-                return new FeedbackDetailsDto();
+                throw new Exception($"Failed to retrieve feedback details. Status code: {response.StatusCode}");
             }
         }
         public async Task<(bool IsSuccess, string Message)> FeedbackResolveAsync(int feedbackID)
         {
-            var response = await _httpClient.PutAsync($"admin/feedback/resolve/{feedbackID}", null);
+            var response = await _httpClient.PostAsync($"api/admin/feedback/resolve/{feedbackID}", null);
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadFromJsonAsync<ApiResponse>();

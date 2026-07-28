@@ -1,4 +1,4 @@
-﻿using MakeUpServiceAdmin.Service;
+using MakeUpServiceAdmin.Service;
 using MakeUpServiceAdmin.ViewModel.BookingVm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +19,7 @@ namespace MakeUpServiceAdmin.Controllers
         {
             return View();
         }
-        [Route("search")]
+        [Route("bookings/search")]
         [HttpGet]
         public async Task<IActionResult> SearchBooking(SearchBookingVm model)
         {
@@ -29,30 +29,34 @@ namespace MakeUpServiceAdmin.Controllers
         }
 
         // Pop up details design
-        [Route("details/{bookingID}")]
+        [Route("bookings/details/{bookingID}")]
         [HttpGet]
         public async Task<IActionResult> GetBookingDetails(int bookingID)
         {
             if(bookingID <= 0)
             {
                 return Json(new { success = false, message = "Invalid booking ID." });
-
             }
             var result = await _services.GetBookingDetailsAsync(bookingID);
             return Json(result);
         }
-        [Route("create")]
+        [Route("bookings/create")]
         public IActionResult CreateBooking()
         {
             return View();
         }
-        [HttpPost("create")]
+        [HttpPost("bookings/create")]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingVm model, [FromHeader(Name = "X-Idempotency-Key")] string idempotencyKey)
         {
-            if (!ModelState.IsValid)
+            if (model == null)
             {
-                return View(model);
+                return Json(new
+                {
+                    success = false,
+                    error = "Invalid booking data format. Please check the time and date fields."
+                });
             }
+
             if (string.IsNullOrEmpty(idempotencyKey))
             {
                 return Json(new
@@ -68,7 +72,7 @@ namespace MakeUpServiceAdmin.Controllers
                 return Json(new
                 {
                     success = false,
-                    error = "Invalid phone number format"
+                    message = "Invalid phone number format"
                 });
             }
             if(!Regex.IsMatch(model.Email, emailPattern))
@@ -76,7 +80,7 @@ namespace MakeUpServiceAdmin.Controllers
                 return Json(new
                 {
                     success = false,
-                    error = "Invalid email format"
+                    message = "Invalid email format"
                 });
             }
             if(model.Pax < 1 || model.Pax > 5)
@@ -84,7 +88,7 @@ namespace MakeUpServiceAdmin.Controllers
                 return Json(new
                 {
                     success = false,
-                    error = "Pax must be between 1 and 5"
+                    message = "Pax must be between 1 and 5"
                 });
             }
             if (model.AppointmentDate < DateTime.Today)
@@ -92,7 +96,7 @@ namespace MakeUpServiceAdmin.Controllers
                 return Json(new
                 {
                     success = false,
-                    error = "Appointment date cannot be in the past"
+                    message = "Appointment date cannot be in the past"
                 });
             }
 
@@ -110,12 +114,12 @@ namespace MakeUpServiceAdmin.Controllers
                 return Json(new
                 {
                     success = false,
-                    error = result.Message
+                    message = result.Message
                 });
             }
         }
         // Booking Status: Pending(default booking), Approved, Rejected, Completed, Cancelled
-        [HttpPost("toggle-status")]
+        [HttpPost("bookings/toggle-status")]
         public async Task<IActionResult> ToggleBooking([FromBody] ToggleBookingVm model)
         {
             if(model.BookingID <= 0)
@@ -140,7 +144,7 @@ namespace MakeUpServiceAdmin.Controllers
                 return Json(new
                 {
                     success = false,
-                    error = result.Message
+                    message = result.Message
                 });
             }
         }

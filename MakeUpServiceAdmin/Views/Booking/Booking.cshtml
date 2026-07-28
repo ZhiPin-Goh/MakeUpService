@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Booking Dashboard";
+}
+@section Styles {
+    <style>
+        .ag-hero {
+            background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.9));
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .ag-hero-btn {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white; padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: bold;
+        }
+    </style>
+}
+<div class="container py-5">
+    <div class="ag-hero">
+        <h1 class="text-white mb-4">Booking Control Center</h1>
+        <p class="text-muted mb-5">Manage all customer appointments, approve pending requests, and assign makeup artists.</p>
+        <a href="@Url.Action("SearchBooking", "Booking")" class="ag-hero-btn me-3">View All Bookings</a>
+        <a href="@Url.Action("CreateBooking", "Booking")" class="btn btn-outline-light rounded-pill px-4 py-3 fw-bold">Create Booking</a>
+    </div>
+</div>

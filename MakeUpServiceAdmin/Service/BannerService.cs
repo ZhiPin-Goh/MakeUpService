@@ -1,6 +1,7 @@
-﻿using MakeUpServiceAdmin.DTO;
+using MakeUpServiceAdmin.DTO;
 using MakeUpServiceAdmin.DTO.BannersDto;
 using MakeUpServiceAdmin.ViewModel.BannerVm;
+using MakeUpServiceAdmin.Views.Banner;
 
 namespace MakeUpServiceAdmin.Service
 {
@@ -22,19 +23,6 @@ namespace MakeUpServiceAdmin.Service
             else
             {
                 return new List<GetAllBannersDto>();
-            }
-        }
-        public async Task<BannerDetailsDto> GetBannerDetailsAsync(int bannerID)
-        {
-            var response = await _httpClient.GetAsync($"api/admin/banner/getbanner/{bannerID}");
-            if (response.IsSuccessStatusCode)
-            {
-                var bannerDetails = await response.Content.ReadFromJsonAsync<BannerDetailsDto>();
-                return bannerDetails ?? new BannerDetailsDto();
-            }
-            else
-            {
-                return new BannerDetailsDto();
             }
         }
         public async Task<(bool IsSuccess, string message)> CreateBannerAsync(CreateBannerVm model, string idempotencyKey)
@@ -61,7 +49,7 @@ namespace MakeUpServiceAdmin.Service
         }
         public async Task<(bool IsSuccess, string Message)> UpdateBannerAsync(UpdateBannerVm model)
         {
-            var request = new HttpRequestMessage(HttpMethod.Put, "api/admin/banner/update");
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/admin/banner/update");
             var content = new MultipartFormDataContent
             {
                 { new StringContent(model.BannerID.ToString()), "BannerID" }
@@ -108,6 +96,20 @@ namespace MakeUpServiceAdmin.Service
             {
                 var errorResponse = await response.Content.ReadFromJsonAsync<ApiResponse>();
                 throw new Exception(errorResponse?.Error ?? "Failed to toggle banner status.");
+            }
+        }
+        public async Task<(bool IsSuccess, string Message)> UpdateBannersSortOrderAsync(List<UpdateBannerSortOrderVm> model)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/admin/banner/update-sort-order", model);
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadFromJsonAsync<ApiResponse>();
+                return (true, responseContent?.Message ?? "Banner sort orders updated successfully.");
+            }
+            else
+            {
+                var errorResponse = await response.Content.ReadFromJsonAsync<ApiResponse>();
+                throw new Exception(errorResponse?.Error ?? "Failed to update banner sort orders.");
             }
         }
     }

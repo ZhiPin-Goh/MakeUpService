@@ -1,4 +1,4 @@
-﻿using CarRental_Users.Interface;
+﻿using MakeUpServiceAdmin.Interface;
 using MakeUpServiceAdmin.Service;
 using MakeUpServiceAdmin.ViewModel.AuthVm;
 using Microsoft.AspNetCore.Authentication;
@@ -31,7 +31,7 @@ namespace MakeUpServiceAdmin.Controllers
                 var response = await _services.LoginAsync(model);
                 if (response.Success)
                 {
-                    var tokens = await _tokenService.TokenGenerateAsync(model.UserName, response.Token!, response.RefreshToken!);
+                    var tokens = await _tokenService.TokenGenerateAsync(model.UserName, response.AccessToken!, response.RefreshToken!);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, tokens.principal, tokens.authProperties);
 
                     return RedirectToAction("Index"); // To main page after successful login

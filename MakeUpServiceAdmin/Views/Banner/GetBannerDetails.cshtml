@@ -1,0 +1,17 @@
+@model dynamic
+@{
+    Layout = null;
+}
+<div class="text-white p-3 text-center">
+    @if (Model != null)
+    {
+        <img src="@Model.ImageUrl" alt="Banner" class="img-fluid rounded mb-3" style="max-height: 200px; object-fit: cover;" />
+        <h4 class="text-primary mb-2">@Model.Title</h4>
+        <p class="text-muted mb-1"><strong>Target URL:</strong> <a href="@Model.TargetUrl" target="_blank" class="text-info">@Model.TargetUrl</a></p>
+        <p class="text-muted"><strong>Sort Order:</strong> @Model.SortOrder</p>
+    }
+    else
+    {
+        <p class="text-danger">@TempData["ErrorMessage"]</p>
+    }
+</div>

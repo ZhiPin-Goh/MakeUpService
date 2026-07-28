@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-background: #fbf9f8;
+  --color-on-background: #1b1c1c;
+  
+  --color-surface: #ffffff;
+  --color-surface-dim: #dbd9d9;
+  --color-surface-bright: #fbf9f8;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f5f3f3;
+  --color-surface-container: #efeded;
+  --color-surface-container-high: #eae8e7;
+  --color-surface-container-highest: #e4e2e2;
+  --color-on-surface: #1b1c1c;
+  --color-on-surface-variant: #50453b;
+  --color-inverse-surface: #303030;
+  --color-inverse-on-surface: #f2f0f0;
+
+  --color-outline: #82756a;
+  --color-outline-variant: #d4c4b7;
+
+  --color-primary: #7d562d;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #d4a373;
+  --color-on-primary-container: #5b3912;
+  --color-inverse-primary: #f0bd8b;
+
+  --color-secondary: #645e4b;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #ece2c9;
+  --color-on-secondary-container: #6b6450;
+
+  --color-tertiary: #6a5d43;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #bbab8d;
+  --color-on-tertiary-container: #4b3f28;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", ui-serif, Georgia, serif;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-background font-sans antialiased selection:bg-primary-container/30 selection:text-primary;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight text-on-surface;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-surface/90 backdrop-blur-md border border-surface-container-highest rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.04)];
+  }
+
+  .input-glow {
+    @apply bg-surface border border-outline-variant rounded-lg px-4 py-2 text-sm text-on-surface placeholder-on-surface-variant/50 transition-all;
+  }
+  
+  .input-glow:focus {
+    @apply border-primary-container outline-none;
+    box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.15);
+  }
+
+  .btn-primary {
+    @apply bg-primary-container text-white font-semibold text-sm px-4 py-2 rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2 shadow-sm hover:shadow active:scale-[0.98] duration-150;
+  }
+  
+  .btn-ghost {
+    @apply border border-outline-variant text-on-surface-variant font-semibold text-sm px-4 py-2 rounded-lg hover:bg-surface-container transition-colors flex items-center justify-center gap-2 active:scale-[0.98] duration-150;
+  }
+}

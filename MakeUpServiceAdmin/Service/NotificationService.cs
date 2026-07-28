@@ -1,4 +1,4 @@
-﻿using MakeUpServiceAdmin.DTO.NotificationDto;
+using MakeUpServiceAdmin.DTO.NotificationDto;
 
 namespace MakeUpServiceAdmin.Service
 {
@@ -11,7 +11,7 @@ namespace MakeUpServiceAdmin.Service
         }
         public async Task<int> UnreadCountAsync()
         {
-            var response = await _httpClient.GetAsync("api/admin/notification/unreadcount");
+            var response = await _httpClient.GetAsync("api/admin/notifications/unreadcount");
             if (response.IsSuccessStatusCode)
             {
                 var count = await response.Content.ReadFromJsonAsync<int>();
@@ -24,7 +24,7 @@ namespace MakeUpServiceAdmin.Service
         }
         public async Task<List<NotificationDto>> GetNotificationsAsync()
         {
-            var response = await _httpClient.GetAsync("api/admin/notification/unread");
+            var response = await _httpClient.GetAsync("api/admin/notifications/unread");
             if (response.IsSuccessStatusCode)
             {
                 var notifications = await response.Content.ReadFromJsonAsync<List<NotificationDto>>();
@@ -35,14 +35,19 @@ namespace MakeUpServiceAdmin.Service
                 return new List<NotificationDto>();
             }
         }
+        public class MarkAsReadResponse
+        {
+            public string Message { get; set; }
+            public NotificationDto Notification { get; set; }
+        }
+
         public async Task<NotificationDto> MarkAsReadAsync(int notificationID)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/admin/notification/markasread", new { notificationID });
+            var response = await _httpClient.PostAsJsonAsync("api/admin/notifications/markasread", new { notificationID });
             if (response.IsSuccessStatusCode)
             {
-                var notification = await response.Content.ReadFromJsonAsync<NotificationDto>();
-                return notification;
-
+                var result = await response.Content.ReadFromJsonAsync<MarkAsReadResponse>();
+                return result?.Notification;
             }
             else
             {

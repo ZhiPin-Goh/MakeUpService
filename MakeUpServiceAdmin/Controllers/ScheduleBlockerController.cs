@@ -1,4 +1,4 @@
-﻿using MakeUpServiceAdmin.Service;
+using MakeUpServiceAdmin.Service;
 using MakeUpServiceAdmin.ViewModel.ScheduleBlockerVm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ namespace MakeUpServiceAdmin.Controllers
         {
             _scheduleBlockerService = scheduleBlockerService;
         }
-        [Route("scheduleblocker")]
+        [Route("scheduleblocke/schedule-blockers")]
         [HttpGet]
         public async Task<IActionResult> GetAllScheduleBlocker()
         {
@@ -21,13 +21,10 @@ namespace MakeUpServiceAdmin.Controllers
             return View(scheduleBlockers);
         }
         // Pop up for create schedule blocker design
-        [HttpPost("create")]
+        [HttpPost("scheduleblocker/create")]
         public async Task<IActionResult> CreateScheduleBlocker([FromBody] CreateVm model)
         {
-            if(model.EndDate < model.StartDate)
-            {
-                return Json(new { success = false, message = "End date cannot be earlier than start date." });
-            }
+            model.IsFullDay = true;
             var result = await _scheduleBlockerService.CreateScheduleBlockerAsync(model);
             if(result.IsSuccess)
             {
@@ -38,7 +35,7 @@ namespace MakeUpServiceAdmin.Controllers
                 return Json(new { success = false, message = result.Message });
             }
         }
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("scheduleblocker/delete/{id}")]
         public async Task<IActionResult> DeleteScheduleBlocker(int id)
         {
             var result = await _scheduleBlockerService.DeleteScheduleBlockerAsync(id);

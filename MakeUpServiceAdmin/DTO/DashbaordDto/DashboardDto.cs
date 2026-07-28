@@ -5,7 +5,7 @@
         public int PendingCount { get; set; }
         public int TodayCount { get; set; }
         public int UnreadFeedbackCount { get; set; }
-        public decimal mMnthRevenus { get; set; }
+        public decimal MonthRevenus { get; set; }
         public List<UpcommingDto> UpComing { get; set; } = new List<UpcommingDto>();
         public List<TopServiceDto> TopServicesType { get; set; } = new List<TopServiceDto>();
     }
@@ -19,7 +19,7 @@
     }
     public class TopServiceDto
     {
-        public string ServiceName { get; set; }
+        public string Type { get; set; }
         public int Count { get; set; }
     }
 }

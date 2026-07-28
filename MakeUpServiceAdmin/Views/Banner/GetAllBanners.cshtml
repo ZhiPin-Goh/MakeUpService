@@ -1,0 +1,374 @@
+@using MakeUpServiceAdmin.DTO.BannersDto
+@model IEnumerable<GetAllBannersDto>
+@{
+    ViewData["Title"] = "Banner Management";
+    var sortedBanners = Model?.OrderBy(b => b.SortOrder).ToList();
+}
+
+<style>
+    .page-wrapper {
+        max-width: 1440px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .page-header {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    @@media (min-width: 640px) {
+        .page-header {
+            flex-direction: row;
+            align-items: center;
+        }
+    }
+
+    .header-title-container h2 {
+        font-size: 1.875rem;
+        color: var(--color-on-background);
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+    }
+    .header-title-container p {
+        color: var(--color-on-surface-variant);
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    /* Table Layout */
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid rgba(212, 196, 183, 0.5); /* outline-variant/50 */
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-radius: 0.75rem;
+        background-color: var(--color-surface);
+    }
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+    .table-th {
+        padding: 1rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-on-surface-variant);
+        background-color: var(--color-surface-container-low);
+        border-bottom: 1px solid var(--color-surface-container-highest);
+    }
+    .table-td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--color-surface-container-highest);
+        color: var(--color-on-surface);
+        background-color: var(--color-surface);
+    }
+    
+    .table-tr {
+        transition: background-color 0.2s;
+    }
+    .table-tr:last-child .table-td {
+        border-bottom: none;
+    }
+    
+    /* Draggable Row */
+    .table-tr.draggable-row {
+        cursor: grab;
+    }
+    .table-tr.draggable-row:active {
+        cursor: grabbing;
+    }
+    .table-tr.draggable-row:hover {
+        background-color: var(--color-surface-container-lowest);
+    }
+    
+    /* Drag Handle */
+    .drag-handle {
+        color: var(--color-on-surface-variant);
+        opacity: 0.5;
+        transition: opacity 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .table-tr.draggable-row:hover .drag-handle {
+        opacity: 1;
+        color: var(--color-primary);
+    }
+
+    .banner-img-preview {
+        width: 5rem;
+        height: 3rem;
+        object-fit: cover;
+        border-radius: 0.375rem;
+        background-color: var(--color-surface-container-high);
+    }
+    .banner-placeholder {
+        width: 5rem;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--color-surface-container-high);
+        border-radius: 0.375rem;
+        color: rgba(80, 69, 59, 0.4);
+    }
+
+    .banner-title-text {
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--color-on-surface);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.625rem;
+        font-size: 0.625rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-radius: 9999px;
+    }
+    .status-active { background-color: var(--color-secondary-container); color: var(--color-on-secondary-container); }
+    .status-inactive { background-color: var(--color-error-container); color: var(--color-on-error-container); }
+
+    .action-btn-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .action-btn {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.375rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .action-btn:hover {
+        background-color: var(--color-surface-container-highest);
+    }
+    .action-edit { color: var(--color-primary); }
+    .action-toggle { color: var(--color-secondary); }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: rgba(80, 69, 59, 0.6);
+    }
+    
+    /* jQuery UI Sortable Ghost/Placeholder for Table Rows */
+    .sortable-placeholder {
+        background-color: var(--color-surface-container-lowest);
+        height: 4rem; /* approximate row height */
+    }
+    .sortable-placeholder td {
+        border-top: 2px dashed var(--color-outline-variant);
+        border-bottom: 2px dashed var(--color-outline-variant);
+    }
+    .sortable-placeholder td:first-child { border-left: 2px dashed var(--color-outline-variant); }
+    .sortable-placeholder td:last-child { border-right: 2px dashed var(--color-outline-variant); }
+</style>
+
+<div class="page-wrapper" id="banners-root">
+    <div class="page-header">
+        <div class="header-title-container">
+            <h2>Promotional Banners</h2>
+            <p>Manage website carousel images and promotional graphics. Drag rows to reorder.</p>
+        </div>
+        <a href="@Url.Action("CreateBanner", "Banner")" class="btn-primary">
+            <i data-lucide="plus" style="width: 1rem; height: 1rem;"></i> Add Banner
+        </a>
+    </div>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th class="table-th" style="width: 3rem;"></th> <!-- Drag Handle -->
+                    <th class="table-th">Image</th>
+                    <th class="table-th">Title</th>
+                    <th class="table-th">Sort Order</th>
+                    <th class="table-th">Target URL</th>
+                    <th class="table-th">Status</th>
+                    <th class="table-th text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="sortable-banners">
+                @if (sortedBanners != null && sortedBanners.Any())
+                {
+                    foreach (var banner in sortedBanners)
+                    {
+                        <tr class="table-tr draggable-row" data-id="@banner.BannerID">
+                            <td class="table-td">
+                                <div class="drag-handle">
+                                    <i data-lucide="grip-vertical" style="width: 1.25rem; height: 1.25rem;"></i>
+                                </div>
+                            </td>
+                            <td class="table-td" style="width: 6rem;">
+                                @if (!string.IsNullOrEmpty(banner.ImageUrl))
+                                {
+                                    <img src="@banner.ImageUrl" alt="@banner.Title" class="banner-img-preview" />
+                                }
+                                else
+                                {
+                                    <div class="banner-placeholder">
+                                        <i data-lucide="image" style="width: 1.5rem; height: 1.5rem;"></i>
+                                    </div>
+                                }
+                            </td>
+                            <td class="table-td">
+                                <h3 class="banner-title-text">@banner.Title</h3>
+                                <div style="font-size: 0.75rem; color: var(--color-on-surface-variant); margin-top: 0.25rem;">ID: @banner.BannerID</div>
+                            </td>
+                            <td class="table-td font-mono sort-order-label">
+                                @banner.SortOrder
+                            </td>
+                            <td class="table-td">
+                                <a href="@banner.TargetUrl" target="_blank" class="btn-link" title="View Target URL">
+                                    @banner.TargetUrl
+                                </a>
+                            </td>
+                            <td class="table-td">
+                                <span class="status-badge @(banner.Status == "Active" ? "status-active" : "status-inactive")">
+                                    @banner.Status
+                                </span>
+                            </td>
+                            <td class="table-td">
+                                <div class="action-btn-group" style="justify-content: flex-end;">
+                                    <a href="@Url.Action("UpdateBanner", "Banner", new { bannerID = banner.BannerID })" class="action-btn action-edit" title="Edit">
+                                        <i data-lucide="edit-2" style="width: 1rem; height: 1rem;"></i>
+                                    </a>
+                                    <button type="button" class="action-btn action-toggle btn-toggle-status" data-id="@banner.BannerID" title="Toggle Status">
+                                        <i data-lucide="power" style="width: 1rem; height: 1rem;"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="table-td">
+                            <div class="empty-state">
+                                <i data-lucide="image-off" style="width: 3rem; height: 3rem; margin: 0 auto 0.75rem auto; opacity: 0.4;"></i>
+                                <p style="font-size: 0.875rem; margin: 0;">No banners found. Click "Add Banner" to upload one.</p>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <form id="anti-forgery-form" style="display:none;">@Html.AntiForgeryToken()</form>
+    
+    <!-- jQuery UI for Sortable -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <!-- jQuery UI Touch Punch for Mobile touch support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.btn-toggle-status').on('click', function() {
+                var id = $(this).data('id');
+                var btn = $(this);
+                
+                $.ajax({
+                    url: '/banners/toggle-banner/' + id,
+                    type: 'POST',
+                    headers: { 'RequestVerificationToken': $('#anti-forgery-form input[name="__RequestVerificationToken"]').val() },
+                    success: function(res) {
+                        if (res.success) {
+                            window.location.reload();
+                        } else {
+                            if (typeof window.AppToast !== 'undefined') window.AppToast.error(res.message || 'Failed to toggle status.');
+                            else alert(res.message || 'Failed to toggle status.');
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 200 || xhr.status === 0 || xhr.status === 404) {
+                            window.location.reload();
+                        } else {
+                            if (typeof window.AppToast !== 'undefined') window.AppToast.error('An error occurred.');
+                            else alert('An error occurred.');
+                        }
+                    }
+                });
+            });
+
+            // Initialize Sortable on Table Body
+            // A helper is needed to maintain row widths when dragging
+            var fixHelper = function(e, ui) {
+                ui.children().each(function() {
+                    $(this).width($(this).width());
+                });
+                return ui;
+            };
+
+            $("#sortable-banners").sortable({
+                helper: fixHelper,
+                placeholder: "sortable-placeholder",
+                tolerance: "pointer",
+                handle: ".drag-handle", // Only allow dragging from the grip icon
+                update: function(event, ui) {
+                    var items = [];
+                    // Loop through each row in the new order
+                    $("#sortable-banners .draggable-row").each(function(index) {
+                        var bannerId = $(this).data("id");
+                        var newSortOrder = index + 1; // 1-based index
+                        
+                        // Update visual label immediately
+                        $(this).find('.sort-order-label').text(newSortOrder);
+                        
+                        items.push({
+                            BannerID: bannerId,
+                            SortOrder: newSortOrder
+                        });
+                    });
+
+                    // Send Bulk Update to Server
+                    $.ajax({
+                        url: '/banners/update-sort-order',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(items),
+                        headers: { 'RequestVerificationToken': $('#anti-forgery-form input[name="__RequestVerificationToken"]').val() },
+                        success: function(res) {
+                            if(res.success) {
+                                if (typeof window.AppToast !== 'undefined') window.AppToast.success('Sort order updated successfully.');
+                            } else {
+                                if (typeof window.AppToast !== 'undefined') window.AppToast.error(res.message || 'Error updating sort order.');
+                                else alert(res.message || 'Error updating sort order.');
+                            }
+                        },
+                        error: function() {
+                            if (typeof window.AppToast !== 'undefined') window.AppToast.error('Server error updating sort order.');
+                            else alert('Server error updating sort order.');
+                        }
+                    });
+                }
+            });
+            $("#sortable-banners").disableSelection();
+        });
+    </script>
+}

@@ -40,7 +40,7 @@ namespace MakeUpServiceAdmin.Service
         }
         public async Task<(bool IsSuccess, string Message)> UpdateSettingAsync(SettingVm model)
         {
-            var response = await _httpClient.PutAsJsonAsync("api/admin/settingsadmin/update-setting", model);
+            var response = await _httpClient.PostAsJsonAsync("api/admin/settingsadmin/update", model);
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadFromJsonAsync<ApiResponse>();
@@ -49,7 +49,7 @@ namespace MakeUpServiceAdmin.Service
             else
             {
                 var errorMessage = await response.Content.ReadFromJsonAsync<ApiResponse>();
-                return (false, errorMessage?.Error ?? "Failed to update setting.");
+                return (false, errorMessage?.Message ?? "Failed to update setting.");
             }
         }
     }

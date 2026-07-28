@@ -1,0 +1,218 @@
+@using MakeUpServiceAdmin.ViewModel.ServiceVm
+@model UpdateServiceVm
+@{
+    ViewData["Title"] = "Update Service";
+}
+
+<style>
+    .create-page-wrapper {
+        max-width: 42rem;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .create-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .create-header h2 {
+        font-size: 1.875rem;
+        color: var(--color-on-background);
+        margin: 0;
+        line-height: 1.2;
+    }
+    .create-header p {
+        font-size: 0.875rem;
+        color: var(--color-on-surface-variant);
+        margin: 0;
+    }
+
+    .create-form-container {
+        padding: 1.5rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(212, 196, 183, 0.5);
+    }
+
+    .create-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+    
+    .form-col-span-2 { grid-column: span 2 / span 2; }
+    
+    @@media (min-width: 640px) {
+        .form-col-span-sm-1 { grid-column: span 1 / span 1; }
+    }
+
+    .form-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-on-surface-variant);
+        margin-bottom: 0.375rem;
+    }
+
+    .input-with-icon-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .input-icon {
+        position: absolute;
+        left: 0.75rem;
+        color: rgba(80, 69, 59, 0.5);
+    }
+    .input-with-icon {
+        padding-left: 2.5rem !important;
+    }
+
+    .file-input-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .file-input-custom {
+        background-color: var(--color-surface-container-low);
+    }
+    .file-input-custom::file-selector-button {
+        margin-right: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        border: none;
+        font-size: 0.875rem;
+        font-weight: 600;
+        background-color: var(--color-primary-container);
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .file-input-custom::file-selector-button:hover {
+        background-color: var(--color-primary);
+    }
+
+    .form-footer {
+        padding-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        border-top: 1px solid var(--color-surface-container-highest);
+    }
+</style>
+
+<div class="create-page-wrapper">
+    <div class="create-header">
+        <h2>Update Studio Offering</h2>
+        <p>Modify an existing service offering.</p>
+    </div>
+
+    <div class="glass-card create-form-container">
+        <form id="standalone-update-service" enctype="multipart/form-data" class="create-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ServiceID" value="@(Model != null && Model.ServiceID > 0 ? Model.ServiceID.ToString() : ViewContext.HttpContext.Request.Query["serviceID"].ToString())" />
+            
+            <div>
+                <label class="form-label">Service Name</label>
+                <input type="text" name="Name" class="input-glow" value="@Model?.Name">
+            </div>
+            
+            <div>
+                <label class="form-label">Description</label>
+                <textarea name="Description" class="input-glow" style="resize: none;" rows="3">@Model?.Description</textarea>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-col-span-2 form-col-span-sm-1">
+                    <label class="form-label">Price (RM)</label>
+                    <div class="input-with-icon-wrapper">
+                        <i data-lucide="dollar-sign" class="input-icon" style="width: 1rem; height: 1rem;"></i>
+                        <input type="number" name="Price" class="input-glow input-with-icon" step="0.01" value="@Model?.Price">
+                    </div>
+                </div>
+                <div class="form-col-span-2 form-col-span-sm-1">
+                    <label class="form-label">Duration (Mins)</label>
+                    <div class="input-with-icon-wrapper">
+                        <i data-lucide="clock" class="input-icon" style="width: 1rem; height: 1rem;"></i>
+                        <input type="number" name="EstimatedDurationMinutes" class="input-glow input-with-icon" value="@Model?.EstimatedDurationMinutes">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="file-input-wrapper">
+                <label class="form-label">Update Image (Optional)</label>
+                <input type="file" name="ImageUrl" class="input-glow file-input-custom" accept="image/*">
+            </div>
+            
+            <div class="form-footer">
+                <a href="@Url.Action("SearchService", "MakeUp")" class="btn-ghost">Cancel</a>
+                <button type="submit" class="btn-primary" id="btn-update">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#standalone-update-service').on('submit', function(e) {
+                e.preventDefault();
+                
+                var $btn = $('#btn-update');
+                var originalText = $btn.html();
+                $btn.prop('disabled', true).html('<i data-lucide="loader" style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;"></i> Saving...');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: '/makeup/update',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            if (typeof window.AppToast !== 'undefined') {
+                                window.AppToast.success(response.message || 'Service updated successfully!');
+                            }
+                            setTimeout(function() {
+                                window.location.href = '@Url.Action("SearchService", "MakeUp")';
+                            }, 1000);
+                        } else {
+                            if (typeof window.AppToast !== 'undefined') {
+                                window.AppToast.error(response.message || 'Error updating service.');
+                            } else {
+                                alert(response.message || 'Error updating service.');
+                            }
+                            $btn.prop('disabled', false).html(originalText);
+                            if (typeof lucide !== 'undefined') lucide.createIcons();
+                        }
+                    },
+                    error: function() {
+                        if (typeof window.AppToast !== 'undefined') {
+                            window.AppToast.error('Server error. Please try again.');
+                        } else {
+                            alert('Server error. Please try again.');
+                        }
+                        $btn.prop('disabled', false).html(originalText);
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    }
+                });
+            });
+            
+            $("<style type='text/css'>@@keyframes spin { 100% { transform: rotate(360deg); } } </style>").appendTo("head");
+        });
+    </script>
+}

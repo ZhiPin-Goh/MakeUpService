@@ -1,25 +1,91 @@
-﻿@model ErrorViewModel
+@model ErrorViewModel
 @{
     ViewData["Title"] = "Error";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<style>
+    .error-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 70vh;
+        width: 100%;
+    }
+    .error-card {
+        max-width: 36rem;
+        width: 100%;
+        padding: 3rem 2rem;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    .error-icon {
+        width: 5rem;
+        height: 5rem;
+        color: var(--color-error);
+        opacity: 0.8;
+    }
+    .error-title {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        color: var(--color-on-background);
+        margin: 0;
+        line-height: 1.2;
+    }
+    .error-subtitle {
+        font-size: 1.25rem;
+        color: var(--color-error);
+        margin: 0;
+        font-weight: 500;
+    }
+    .error-message {
+        font-size: 0.875rem;
+        color: var(--color-on-surface-variant);
+        margin: 0;
+        line-height: 1.5;
+        background-color: var(--color-surface-container);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        text-align: left;
+    }
+    .error-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+</style>
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
+<div class="error-wrapper">
+    <div class="glass-card error-card">
+        <i data-lucide="alert-triangle" class="error-icon"></i>
+        <div>
+            <h1 class="error-title">System Error</h1>
+            <h2 class="error-subtitle">An error occurred while processing your request.</h2>
+        </div>
+        
+        @if (Model.ShowRequestId)
+        {
+            <div class="error-message">
+                <strong>Request ID:</strong> <code>@Model.RequestId</code>
+            </div>
+        }
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
+        <div class="error-message" style="background-color: rgba(186,26,26,0.05); border: 1px solid rgba(186,26,26,0.2);">
+            <p style="margin-top:0; font-weight:600; color: var(--color-error);">Development Mode Notes</p>
+            <p style="margin-bottom:0;">
+                The application encountered an unexpected exception. Swapping to <strong>Development</strong> environment reveals more details, but shouldn't be enabled in deployed applications.
+            </p>
+        </div>
+
+        <div class="error-actions">
+            <button onclick="window.history.back()" class="btn-primary">
+                <i data-lucide="arrow-left" style="width: 1rem; height: 1rem;"></i> Go Back
+            </button>
+            <a href="@Url.Action("Dashboard", "Dashboard")" class="btn-ghost">
+                <i data-lucide="home" style="width: 1rem; height: 1rem;"></i> Dashboard
+            </a>
+        </div>
+    </div>
+</div>

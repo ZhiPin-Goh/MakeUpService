@@ -1,0 +1,173 @@
+@using MakeUpServiceAdmin.ViewModel.BannerVm
+@model UpdateBannerVm
+@{
+    ViewData["Title"] = "Update Banner";
+}
+
+<style>
+    .create-page-wrapper {
+        max-width: 42rem;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .create-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .create-header h2 {
+        font-size: 1.875rem;
+        color: var(--color-on-background);
+        margin: 0;
+        line-height: 1.2;
+    }
+    .create-header p {
+        font-size: 0.875rem;
+        color: var(--color-on-surface-variant);
+        margin: 0;
+    }
+
+    .create-form-container {
+        padding: 1.5rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(212, 196, 183, 0.5);
+    }
+
+    .create-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-on-surface-variant);
+    }
+
+    .file-input-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .file-input-custom {
+        background-color: var(--color-surface-container-low);
+    }
+    .file-input-custom::file-selector-button {
+        margin-right: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        border: none;
+        font-size: 0.875rem;
+        font-weight: 600;
+        background-color: var(--color-primary-container);
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .file-input-custom::file-selector-button:hover {
+        background-color: var(--color-primary);
+    }
+
+    .form-footer {
+        padding-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        border-top: 1px solid var(--color-surface-container-highest);
+    }
+</style>
+
+<div class="create-page-wrapper">
+    <div class="create-header">
+        <h2>Update Banner</h2>
+        <p>Modify existing promotional banner.</p>
+    </div>
+
+    <div class="glass-card create-form-container">
+        <form id="standalone-update-banner" enctype="multipart/form-data" class="create-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="BannerID" value="@(Model != null ? Model.BannerID.ToString() : ViewContext.HttpContext.Request.Query["bannerID"].ToString())" />
+            
+            <div class="form-group">
+                <label class="form-label">Banner Title</label>
+                <input type="text" name="Title" class="input-glow w-full" value="@Model?.Title">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Update Target URL (Optional)</label>
+                <input type="text" name="TargetUrl" class="input-glow w-full" placeholder="https://example.com" value="@Model?.TargetUrl">
+            </div>
+            <div class="file-input-wrapper">
+                <label class="form-label">Update Image (Optional)</label>
+                <input type="file" name="ImageUrl" class="input-glow w-full file-input-custom" accept="image/*">
+            </div>
+            
+            <div class="form-footer">
+                <a href="@Url.Action("GetAllBanners", "Banner")" class="btn-ghost">Cancel</a>
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#standalone-update-banner').on('submit', function(e) {
+                e.preventDefault();
+                
+                var form = $(this);
+                var formData = new FormData(this);
+                var submitBtn = form.find('button[type="submit"]');
+                var originalText = submitBtn.text();
+                
+                submitBtn.prop('disabled', true).text('Saving...');
+                
+                $.ajax({
+                    url: '@Url.Action("UpdateBanner", "Banner")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: { 
+                        'RequestVerificationToken': form.find('input[name="__RequestVerificationToken"]').val() 
+                    },
+                    success: function(res) {
+                        if (res.success) {
+                            if (typeof window.AppToast !== 'undefined') window.AppToast.success(res.message || 'Banner updated successfully.');
+                            setTimeout(function() {
+                                window.location.href = '@Url.Action("GetAllBanners", "Banner")';
+                            }, 1000);
+                        } else {
+                            if (typeof window.AppToast !== 'undefined') window.AppToast.error(res.message || 'Failed to update banner.');
+                            else alert(res.message || 'Failed to update banner.');
+                            submitBtn.prop('disabled', false).text(originalText);
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 200 || xhr.status === 0) {
+                            window.location.href = '@Url.Action("GetAllBanners", "Banner")';
+                        } else {
+                            if (typeof window.AppToast !== 'undefined') window.AppToast.error('An error occurred during update.');
+                            else alert('An error occurred during update.');
+                            submitBtn.prop('disabled', false).text(originalText);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

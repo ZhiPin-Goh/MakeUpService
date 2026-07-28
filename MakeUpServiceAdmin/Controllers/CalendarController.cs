@@ -1,4 +1,4 @@
-﻿using MakeUpServiceAdmin.Service;
+using MakeUpServiceAdmin.Service;
 using MakeUpServiceAdmin.ViewModel.CalendarVm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +13,20 @@ namespace MakeUpServiceAdmin.Controllers
         {
             _services = services;
         }
-        [Route("calendar-event")]
+        [Route("calendar/calendar-event")]
         [HttpGet]
         public async Task<IActionResult> CalendarEvent(SelectDateVm model)
         {
             var events = await _services.CalendarEventAsync(model);
             return View(events);
+        }
+
+        [HttpGet("calendar/api/events")]
+        public async Task<IActionResult> GetEventsApi(DateTime start, DateTime end)
+        {
+            var model = new SelectDateVm { Start = start, End = end };
+            var events = await _services.CalendarEventAsync(model);
+            return Json(events);
         }
     }
 }

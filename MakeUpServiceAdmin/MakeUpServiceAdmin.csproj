@@ -15,4 +15,8 @@
     <Folder Include="ViewModel\ReviewVm\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="makeupserviceadmin\assets\.aistudio\.gitignore" />
+  </ItemGroup>
+
 </Project>

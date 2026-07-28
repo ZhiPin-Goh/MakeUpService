@@ -13,14 +13,14 @@ namespace MakeUpServiceAdmin.Controllers
         {
             _services = services;
         }
-        [Route("settings")]
+        [Route("settings/system-settings")]
         [HttpGet]
         public async Task<IActionResult> GetSettings()
         {
             var result = await _services.GetSettingsAsync();
             return View(result);
         }
-        [HttpGet("settings-details/{key}")]
+        [HttpGet("setting/settings-details/{key}")]
         public async Task<IActionResult> GetSettingDetails(string key)
         {
             if (string.IsNullOrEmpty(key))
@@ -31,7 +31,7 @@ namespace MakeUpServiceAdmin.Controllers
             var result = await _services.GetSettingDetailsAsync(key);
             return View(result);
         }
-        [HttpPost("update")]
+        [HttpPost("settings/update")]
         public async Task<IActionResult> UpdateSetting([FromBody] SettingVm model)
         {
             if (string.IsNullOrEmpty(model.Key))

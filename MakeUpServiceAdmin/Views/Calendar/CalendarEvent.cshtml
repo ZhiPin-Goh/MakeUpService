@@ -1,0 +1,620 @@
+@{
+    ViewData["Title"] = "Schedule Management";
+}
+
+<style>
+    .page-wrapper {
+        max-width: 1440px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .page-header h2 {
+        font-size: 1.875rem;
+        color: var(--color-on-background);
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+        margin-top: 0;
+    }
+    .page-header p {
+        color: var(--color-on-surface-variant);
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .calendar-container {
+        max-width: 56rem;
+        width: 100%;
+    }
+
+    .calendar-card {
+        padding: 1.5rem;
+        background-color: var(--color-surface);
+    }
+
+    .calendar-toolbar {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        gap: 1rem;
+    }
+    @@media (min-width: 640px) {
+        .calendar-toolbar {
+            flex-direction: row;
+            align-items: center;
+        }
+    }
+
+    .calendar-nav {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+        justify-content: space-between;
+    }
+    @@media (min-width: 640px) {
+        .calendar-nav {
+            width: auto;
+            justify-content: flex-start;
+        }
+    }
+
+    .calendar-nav-btn {
+        padding: 0.5rem;
+        border-radius: 9999px;
+        transition: background-color 0.2s;
+        color: var(--color-on-surface-variant);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+    .calendar-nav-btn:hover { background-color: var(--color-surface-container); }
+
+    .calendar-title-wrap { text-align: center; }
+    .calendar-title {
+        font-size: 1.25rem;
+        font-family: var(--font-display);
+        font-weight: 600;
+        color: var(--color-on-surface);
+        width: 10rem;
+        margin: 0;
+    }
+    .calendar-subtitle {
+        font-size: 0.625rem;
+        color: rgba(80, 69, 59, 0.7);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0;
+    }
+
+    .calendar-legend {
+        display: flex;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        background-color: var(--color-surface-container);
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(212, 196, 183, 0.3);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    .legend-dot {
+        width: 0.625rem;
+        height: 0.625rem;
+        border-radius: 9999px;
+    }
+    .legend-dot.booking {
+        background-color: var(--color-primary-container);
+        box-shadow: 0 0 0 2px rgba(125, 86, 45, 0.1);
+    }
+    .legend-dot.blocked {
+        background-color: rgba(186, 26, 26, 0.7);
+        box-shadow: 0 0 0 2px rgba(186, 26, 26, 0.1);
+    }
+
+    .calendar-grid-header {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 0.5rem;
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: rgba(80, 69, 59, 0.7);
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+    }
+
+    .calendar-grid-body {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 0.5rem;
+        transition: opacity 0.3s;
+    }
+
+    .calendar-day-empty {
+        aspect-ratio: 1 / 1;
+        background-color: transparent;
+    }
+
+    .calendar-day {
+        aspect-ratio: 1 / 1;
+        position: relative;
+        border-radius: 0.75rem;
+        border: 1px solid transparent;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    .calendar-day:hover { transform: scale(1.02); }
+
+    .day-number {
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .day-indicators {
+        display: flex;
+        gap: 0.25rem;
+        justify-content: flex-end;
+        width: 100%;
+        margin-top: auto;
+    }
+    .indicator-dot {
+        width: 0.375rem;
+        height: 0.375rem;
+        border-radius: 9999px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    .indicator-booking { background-color: var(--color-primary-container); }
+    .indicator-blocked { background-color: var(--color-error); }
+
+    /* Day States */
+    .calendar-day.is-selected {
+        border-color: var(--color-primary);
+        background-color: rgba(125, 86, 45, 0.05);
+        color: var(--color-primary);
+        box-shadow: 0 0 0 2px rgba(212, 163, 115, 0.3);
+        z-index: 10;
+    }
+    .calendar-day.is-blocked {
+        border-color: rgba(186, 26, 26, 0.2);
+        background-color: rgba(186, 26, 26, 0.05);
+        color: var(--color-error);
+    }
+    .calendar-day.is-blocked:hover {
+        background-color: rgba(186, 26, 26, 0.1);
+    }
+    .calendar-day.has-booking {
+        border-color: rgba(212, 163, 115, 0.3);
+        background-color: rgba(212, 163, 115, 0.1);
+        color: var(--color-on-surface);
+    }
+    .calendar-day.has-booking:hover {
+        background-color: rgba(212, 163, 115, 0.2);
+    }
+    .calendar-day.is-default {
+        border-color: rgba(212, 196, 183, 0.3);
+        color: var(--color-on-surface);
+    }
+    .calendar-day.is-default:hover {
+        border-color: var(--color-outline);
+        background-color: var(--color-surface-container);
+    }
+
+    /* Modal */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        padding: 1rem;
+    }
+    .modal-overlay.is-visible { display: flex; }
+    
+    .modal-dialog {
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-outline-variant);
+        border-radius: 0.75rem;
+        max-width: 24rem;
+        width: 100%;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+    }
+    
+    .modal-header {
+        padding: 1.25rem;
+        border-bottom: 1px solid var(--color-surface-container-highest);
+        background-color: var(--color-surface-container-low);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .modal-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--color-on-surface);
+        margin: 0;
+    }
+    .modal-close-btn {
+        color: var(--color-on-surface-variant);
+        background-color: rgba(228, 226, 226, 0.5);
+        border-radius: 9999px;
+        padding: 0.375rem;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+    .modal-close-btn:hover {
+        color: var(--color-on-surface);
+        background-color: var(--color-surface-container-highest);
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    /* Custom Scrollbar */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: var(--color-outline-variant);
+        border-radius: 20px;
+    }
+
+    /* Event Card injected via JS */
+    .event-card {
+        padding: 1rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--color-surface-container-highest);
+        background-color: var(--color-surface-container-lowest);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.2s;
+        margin-bottom: 0.75rem;
+    }
+    .event-card:last-child { margin-bottom: 0; }
+    .event-card:hover { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    
+    .event-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+    .event-card-title {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--color-on-surface);
+        line-height: 1.25;
+        padding-right: 1rem;
+        margin: 0;
+    }
+    
+    .event-badge {
+        flex-shrink: 0;
+        display: inline-block;
+        padding: 0.125rem 0.5rem;
+        font-size: 0.625rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        border-radius: 0.25rem;
+    }
+    .event-badge-blocker { background-color: var(--color-error-container); color: var(--color-on-error-container); }
+    .event-badge-booking { background-color: var(--color-primary-container); color: var(--color-on-primary-container); }
+
+    .event-card-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+    }
+    .event-detail-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--color-on-surface-variant);
+    }
+    .event-detail-row i { width: 0.875rem; height: 0.875rem; }
+
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        color: rgba(80, 69, 59, 0.6);
+    }
+    .empty-state i {
+        width: 2.5rem;
+        height: 2.5rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.5;
+    }
+    .empty-state p {
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin: 0;
+    }
+</style>
+
+<div class="page-wrapper" id="schedule-root">
+    <div class="page-header">
+        <h2 id="schedule-title">Schedule Management</h2>
+        <p>Manage your studio availability, schedule client blocks, and log time off.</p>
+    </div>
+
+    <div class="calendar-container">
+        <div class="glass-card calendar-card">
+            <div class="calendar-toolbar">
+                <div class="calendar-nav">
+                    <button id="btn-prev-month" class="calendar-nav-btn">
+                        <i data-lucide="chevron-left"></i>
+                    </button>
+                    <div class="calendar-title-wrap">
+                        <h3 class="calendar-title" id="calendar-month-year">
+                            <!-- Dynamic Date -->
+                        </h3>
+                        <p class="calendar-subtitle">Click date to inspect</p>
+                    </div>
+                    <button id="btn-next-month" class="calendar-nav-btn">
+                        <i data-lucide="chevron-right"></i>
+                    </button>
+                </div>
+                <div class="calendar-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot booking"></div> Bookings
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot blocked"></div> Blocked
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Grid Header -->
+            <div class="calendar-grid-header">
+                <span>Sun</span>
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+            </div>
+
+            <!-- Calendar Grid Cells -->
+            <div class="calendar-grid-body" id="calendar-grid">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Event Details Modal -->
+<div id="eventDetailsModal" class="modal-overlay">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3 class="modal-title" id="event-modal-title">Events</h3>
+            <button type="button" id="btn-close-event-modal" class="modal-close-btn">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="modal-body custom-scrollbar" id="event-modal-content">
+            <!-- Events listed here -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            let currentMonth = new Date(); 
+            currentMonth.setDate(1); 
+            
+            let selectedDate = null;
+            let eventsData = [];
+
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+            function getDaysInMonth(year, month) {
+                return new Date(year, month + 1, 0).getDate();
+            }
+            
+            function getStartDayOffset(year, month) {
+                return new Date(year, month, 1).getDay();
+            }
+
+            function renderCalendar() {
+                const year = currentMonth.getFullYear();
+                const month = currentMonth.getMonth();
+                
+                $('#calendar-month-year').text(monthNames[month] + " " + year);
+                
+                const daysInMonth = getDaysInMonth(year, month);
+                const startDayOffset = getStartDayOffset(year, month);
+                
+                let html = '';
+                // Empty offset cells
+                for(let i = 0; i < startDayOffset; i++) {
+                    html += '<div class="calendar-day-empty"></div>';
+                }
+                
+                // Day cells
+                for(let day = 1; day <= daysInMonth; day++) {
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const isSelected = selectedDate === dateStr;
+                    
+                    let hasBooking = false;
+                    let isBlocked = false;
+                    
+                    eventsData.forEach(ev => {
+                        const startPart = ev.start.substring(0, 10);
+                        const endPart = ev.end.substring(0, 10);
+                        if(dateStr >= startPart && dateStr <= endPart) {
+                            const typeStr = (ev.eventType || '').toLowerCase().trim();
+                            const titleStr = (ev.title || '').toLowerCase();
+                            
+                            if(typeStr.includes("blocker") || typeStr.includes("blocked") || titleStr.includes("blocked")) {
+                                isBlocked = true;
+                            } else {
+                                hasBooking = true;
+                            }
+                        }
+                    });
+                    
+                    let stateClass = 'is-default';
+                    if (isSelected) {
+                        stateClass = 'is-selected';
+                    } else if (isBlocked) {
+                        stateClass = 'is-blocked';
+                    } else if (hasBooking) {
+                        stateClass = 'has-booking';
+                    }
+                    
+                    html += `<div class="calendar-day ${stateClass}" data-date="${dateStr}">`;
+                    html += `  <span class="day-number">${day}</span>`;
+                    html += `  <div class="day-indicators">`;
+                    if (hasBooking) html += `    <span class="indicator-dot indicator-booking"></span>`;
+                    if (isBlocked) html += `    <span class="indicator-dot indicator-blocked"></span>`;
+                    html += `  </div>`;
+                    html += `</div>`;
+                }
+                
+                $('#calendar-grid').html(html);
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+
+            function fetchEventsAndRender() {
+                const year = currentMonth.getFullYear();
+                const month = currentMonth.getMonth();
+                
+                const startStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+                const endStr = `${year}-${String(month + 1).padStart(2, '0')}-${getDaysInMonth(year, month)}`;
+                
+                $('#calendar-grid').css('opacity', '0.5');
+                
+                $.ajax({
+                    url: '/calendar/api/events',
+                    data: { start: startStr, end: endStr },
+                    type: 'GET',
+                    success: function(res) {
+                        if (res) {
+                            eventsData = res.map(e => ({
+                                id: e.id || e.ID,
+                                title: e.title || e.Title || 'Event',
+                                start: e.start || e.Start || '',
+                                end: e.end || e.End || '',
+                                eventType: e.eventType || e.EventType || ((e.title || '').toLowerCase().includes('blocked') ? 'Blocker' : 'Booking'),
+                                color: e.color || e.Color || '',
+                                allDay: e.allDay || e.AllDay || false
+                            }));
+                        } else {
+                            eventsData = [];
+                        }
+                        renderCalendar();
+                        $('#calendar-grid').css('opacity', '1');
+                    },
+                    error: function() {
+                        eventsData = [];
+                        renderCalendar();
+                        $('#calendar-grid').css('opacity', '1');
+                    }
+                });
+            }
+
+            // Month Navigation
+            $('#btn-prev-month').on('click', function() {
+                currentMonth.setMonth(currentMonth.getMonth() - 1);
+                selectedDate = null;
+                fetchEventsAndRender();
+            });
+
+            $('#btn-next-month').on('click', function() {
+                currentMonth.setMonth(currentMonth.getMonth() + 1);
+                selectedDate = null;
+                fetchEventsAndRender();
+            });
+
+            // Date Click
+            $(document).on('click', '.calendar-day', function() {
+                selectedDate = $(this).data('date');
+                renderCalendar(); 
+                
+                const dayEvents = eventsData.filter(ev => {
+                    const startPart = ev.start.substring(0, 10);
+                    const endPart = ev.end.substring(0, 10);
+                    return selectedDate >= startPart && selectedDate <= endPart;
+                });
+                
+                const dateObj = new Date(selectedDate);
+                const dateTitle = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+                $('#event-modal-title').text(dateTitle);
+                
+                let html = '';
+                if(dayEvents.length === 0) {
+                    html = '<div class="empty-state">';
+                    html += '  <i data-lucide="calendar-off"></i>';
+                    html += '  <p>No events on this day.</p>';
+                    html += '</div>';
+                } else {
+                    dayEvents.forEach(ev => {
+                        const typeStr = (ev.eventType || '').toLowerCase().trim();
+                        const titleStr = (ev.title || '').toLowerCase();
+                        const isBlocker = typeStr.includes('blocker') || typeStr.includes('blocked') || titleStr.includes('blocked');
+                        const badgeClass = isBlocker ? 'event-badge-blocker' : 'event-badge-booking';
+                        
+                        html += `<div class="event-card">`;
+                        html += `  <div class="event-card-header">`;
+                        html += `    <h4 class="event-card-title">${ev.title}</h4>`;
+                        html += `    <span class="event-badge ${badgeClass}">${isBlocker ? 'Blocker' : 'Booking'}</span>`;
+                        html += `  </div>`;
+                        html += `  <div class="event-card-details">`;
+                        if(ev.allDay) {
+                            html += `    <div class="event-detail-row"><i data-lucide="clock"></i> All Day</div>`;
+                        } else {
+                            html += `    <div class="event-detail-row"><i data-lucide="calendar-clock"></i> ${ev.start.replace('T', ' ').substring(0, 16)}</div>`;
+                            html += `    <div class="event-detail-row"><i data-lucide="calendar-check"></i> ${ev.end.replace('T', ' ').substring(0, 16)}</div>`;
+                        }
+                        html += `  </div>`;
+                        html += `</div>`;
+                    });
+                }
+                
+                $('#event-modal-content').html(html);
+                $('#eventDetailsModal').addClass('is-visible');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            });
+
+            // Close Modal
+            $('#btn-close-event-modal').on('click', function() {
+                $('#eventDetailsModal').removeClass('is-visible');
+                selectedDate = null;
+                renderCalendar();
+            });
+            
+            // Initial Load
+            fetchEventsAndRender();
+        });
+    </script>
+}

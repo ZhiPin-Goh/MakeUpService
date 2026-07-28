@@ -13,12 +13,12 @@ namespace MakeUpServiceAdmin.Controllers
         {
             _services = services;
         }
-        [Route("calculate-travel-fee")]
+        [Route("fee/calculate-travel-fee")]
         public IActionResult SearchFee()
         {
             return View();
         }
-        [HttpPost("calculate-travel-fee")]
+        [HttpPost("fee/calculate-travel-fee")]
         public async Task<IActionResult> CalculateTravelFee([FromBody] TravelFeeRequestVm model)
         {
             if (!ModelState.IsValid)
@@ -48,7 +48,7 @@ namespace MakeUpServiceAdmin.Controllers
                 });
             }
         }
-        [HttpGet("searchlocation")]
+        [HttpGet("fee/searchlocation")]
         public async Task<IActionResult> SearchLocation(string query, CancellationToken cancellationToken)
         {
             string jsonString = await _services.GetLocationSuggestionsAsync(query, cancellationToken);

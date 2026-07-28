@@ -1,4 +1,4 @@
-﻿using MakeUpServiceAdmin.Service;
+using MakeUpServiceAdmin.Service;
 using MakeUpServiceAdmin.ViewModel.ServiceVm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ namespace MakeUpServiceAdmin.Controllers
         {
             _services = services;
         }
-        [Route("service")]
+        [Route("makeup/services")]
         [HttpGet]
         public async Task<IActionResult> SearchService(SearchServiceVm model)
         {
@@ -21,12 +21,19 @@ namespace MakeUpServiceAdmin.Controllers
             var result = await _services.SearchServiceAsync(model);
             return View(result);
         }
-        [Route("create")]
+
+        [HttpGet("api/services/list")]
+        public async Task<IActionResult> GetServicesList()
+        {
+           var services = await _services.GetAllActiveService();
+            return Json(services);
+        }
+        [Route("makeup/create")]
         public IActionResult CreateService()
         {
             return View();
         }
-        [HttpPost("create")]
+        [HttpPost("makeup/create")]
         public async Task<IActionResult> CreateService([FromForm]CreateServiceVm model, string idempotencyKey)
         {
             if (string.IsNullOrEmpty(idempotencyKey))
@@ -34,7 +41,7 @@ namespace MakeUpServiceAdmin.Controllers
                 return Json(new
                 {
                     success = false,
-                    message = "Invalid banner data."
+                    message = "Invalid service data."
                 });
             }
             var result = await _services.CreateServiceAsync(model, idempotencyKey);
@@ -55,12 +62,12 @@ namespace MakeUpServiceAdmin.Controllers
                 });
             }
         }
-        [Route("update-service")]
-        public IActionResult UpdateService(int serviccID)
+        [Route("makeup/update-service")]
+        public IActionResult UpdateService(int serviceID)
         {
             return View();
         }
-        [HttpPost("upate")]
+        [HttpPost("makeup/update")]
         public async Task<IActionResult> UpdateService([FromForm] UpdateServiceVm model)
         {
             if(model.ServiceID <=0)
@@ -84,12 +91,12 @@ namespace MakeUpServiceAdmin.Controllers
             {
                 return Json(new
                 {
-                    success = true,
+                    success = false,
                     message = result.Message
                 });
             }
         }
-        [HttpPost("toggle-status/{id}")]
+        [HttpPost("makeup/toggle-status/{id}")]
         public async Task<IActionResult> ToggleService(int id)
         {
             if (id <= 0)
@@ -117,6 +124,17 @@ namespace MakeUpServiceAdmin.Controllers
                     message = result.Message
                 });
             }
+        }
+        
+        [HttpGet("makeup/details/{id}")]
+        public async Task<IActionResult> GetServiceDetails(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid Service ID.");
+            }
+            var details = await _services.GetServiceDetailsAsync(id);
+            return Json(details);
         }
     }
 }

@@ -1,0 +1,291 @@
+@using MakeUpServiceAdmin.ViewModel.BookingVm
+@model CreateBookingVm
+@{
+    ViewData["Title"] = "Create Booking";
+}
+
+<style>
+    .create-page-wrapper {
+        max-width: 42rem;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .create-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .create-header h2 {
+        font-size: 1.875rem;
+        color: var(--color-on-background);
+        margin: 0;
+        line-height: 1.2;
+    }
+    .create-header p {
+        font-size: 0.875rem;
+        color: var(--color-on-surface-variant);
+        margin: 0;
+    }
+
+    .create-form-container {
+        padding: 1.5rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(212, 196, 183, 0.5);
+    }
+
+    .create-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+    
+    .form-col-span-2 { grid-column: span 2 / span 2; }
+    
+    @@media (min-width: 640px) {
+        .form-col-span-sm-1 { grid-column: span 1 / span 1; }
+    }
+
+    .form-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-on-surface-variant);
+        margin-bottom: 0.25rem;
+    }
+
+    .form-label-with-icon {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .time-tooltip-container {
+        position: relative;
+        display: inline-block;
+    }
+    .time-tooltip-icon {
+        color: var(--color-on-surface-variant);
+        cursor: help;
+    }
+    .time-tooltip-content {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 0.5rem;
+        width: max-content;
+        padding: 0.25rem 0.5rem;
+        background-color: var(--color-surface-container-highest);
+        color: var(--color-on-surface);
+        font-size: 0.75rem;
+        border-radius: 0.25rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s;
+        pointer-events: none;
+        z-index: 10;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(212, 196, 183, 0.3);
+    }
+    .time-tooltip-container:hover .time-tooltip-content {
+        opacity: 1;
+        visibility: visible;
+    }
+    .time-tooltip-arrow {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 4px solid transparent;
+        border-top-color: var(--color-surface-container-highest);
+    }
+
+    .form-footer {
+        padding-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        border-top: 1px solid var(--color-surface-container-highest);
+    }
+</style>
+
+<div class="create-page-wrapper">
+    <div class="create-header">
+        <h2>New Booking Request</h2>
+        <p>Schedule a new client appointment.</p>
+    </div>
+
+    <div class="glass-card create-form-container">
+        <form id="standalone-create-booking" class="create-form">
+            @Html.AntiForgeryToken()
+            <div class="form-grid">
+                <div class="form-col-span-2">
+                    <label class="form-label">Customer Name</label>
+                    <input type="text" name="Name" class="input-glow" placeholder="e.g. Jessica Miller" required>
+                </div>
+                <div class="form-col-span-2">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="Email" class="input-glow" placeholder="jessica@example.com" required>
+                </div>
+                <div class="form-col-span-2">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" name="PhoneNumber" class="input-glow" placeholder="01123456789" required>
+                </div>
+                <div class="form-col-span-2 form-col-span-sm-1">
+                    <label class="form-label">Service</label>
+                    <select name="ServiceID" id="select-service" class="input-glow" data-type="number" required>
+                        <option value="">Loading services...</option>
+                    </select>
+                </div>
+                <div class="form-col-span-2 form-col-span-sm-1">
+                    <label class="form-label">Pax Count</label>
+                    <input type="number" name="Pax" class="input-glow" min="1" max="5" value="1" required>
+                </div>
+                <div>
+                    <label class="form-label">Date</label>
+                    <input type="date" name="AppointmentDate" min="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Now.AddMonths(3).ToString("yyyy-MM-dd")" class="input-glow" required>
+                </div>
+                <div>
+                    <label class="form-label form-label-with-icon">
+                        Time
+                        <div class="time-tooltip-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="time-tooltip-icon">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            <div class="time-tooltip-content">
+                                21:00 - 02:59 is unavailable for booking
+                                <div class="time-tooltip-arrow"></div>
+                            </div>
+                        </div>
+                    </label>
+                    <input type="time" name="AppointmentTime" min="03:00" max="21:00" class="input-glow" required>
+                </div>
+                <div class="form-col-span-2">
+                    <label class="form-label">Location Details</label>
+                    <input type="text" name="LocationAddress" class="input-glow" placeholder="Hotel Name, suite, or studio address" required>
+                </div>
+                <div class="form-col-span-2 form-col-span-sm-1">
+                    <label class="form-label">Unit (Optional)</label>
+                    <input type="text" name="Unit" class="input-glow" placeholder="e.g. C-2-1">
+                </div>
+                <div class="form-col-span-2 form-col-span-sm-1">
+                    <label class="form-label">Area (Optional)</label>
+                    <select name="AreaID" id="select-area" class="input-glow" data-type="number">
+                        <option value="">Loading areas...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-footer">
+                <a href="@Url.Action("SearchBooking", "Booking")" class="btn-ghost">Cancel</a>
+                <button type="submit" class="btn-primary">Request Booking</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/standalone-forms.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Populate Services Dropdown
+            $.getJSON('/api/services/list', function(data) {
+                var $select = $('#select-service');
+                $select.empty().append('<option value="">-- Select a Service --</option>');
+                if(data && data.length > 0) {
+                    $.each(data, function(i, s) {
+                        var id = s.serviceID ?? s.ServiceID;
+                        var name = s.name ?? s.Name;
+                        var price = s.price ?? s.Price;
+                        $select.append($('<option></option>').val(id).text(name + ' (RM ' + parseFloat(price).toFixed(2) + ')'));
+                    });
+                } else {
+                    $select.append('<option value="" disabled>No services available</option>');
+                }
+            });
+
+            // Populate Areas Dropdown
+            $.getJSON('/api/areas/list', function(data) {
+                var $select = $('#select-area');
+                $select.empty().append('<option value="">-- No specific area (Free) --</option>');
+                if(data && data.length > 0) {
+                    $.each(data, function(i, a) {
+                        var id = a.areaID ?? a.AreaID;
+                        var name = a.name ?? a.Name;
+                        var basePrice = a.basePrice ?? a.BasePrice;
+                        $select.append($('<option></option>').val(id).text(name + ' (+ RM ' + parseFloat(basePrice).toFixed(2) + ' Base Price)'));
+                    });
+                }
+            });
+
+            $('#standalone-create-booking').on("submit", function(e){
+                e.preventDefault();
+
+                var timeVal = $('input[name="AppointmentTime"]').val();
+                if (timeVal && timeVal.length === 5) {
+                    timeVal += ':00'; // Append seconds
+                }
+
+                var formData = {
+                    Name: $('input[name="Name"]').val(),
+                    Email: $('input[name="Email"]').val(),
+                    PhoneNumber: $('input[name="PhoneNumber"]').val(),
+                    ServiceID: parseInt($('select[name="ServiceID"]').val()),
+                    Pax: parseInt($('input[name="Pax"]').val()),
+                    AppointmentDate: $('input[name="AppointmentDate"]').val(),
+                    AppointmentTime: timeVal,
+                    LocationAddress: $('input[name="LocationAddress"]').val(),
+                    Unit: $('input[name="Unit"]').val() || null,
+                    AreaID: $('select[name="AreaID"]').val() ? parseInt($('select[name="AreaID"]').val()) : null
+                };
+
+                var idempotencyKey = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+
+                $.ajax({
+                    url: '/bookings/create',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    headers: { 'X-Idempotency-Key': idempotencyKey },
+                    beforeSend: function() {
+                        $('button[type="submit"]').prop('disabled', true).text('Creating Booking...');
+                    },
+                    success: function(response) {
+                        if(response.success) {
+                            alert('Booking created successfully! Booking ID: ' + response.bookingID);
+                            window.location.href = '@Url.Action("SearchBooking", "Booking")';
+                        } else {
+                            alert('Error: ' + (response.message || 'Failed to create booking'));
+                            $('button[type="submit"]').prop('disabled', false).text('Request Booking');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMsg = 'An error occurred while creating the booking.';
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            errorMsg = response.error || response.message || errorMsg;
+                        } catch(e) {}
+                        alert('Error: ' + errorMsg);
+                        $('button[type="submit"]').prop('disabled', false).text('Request Booking');
+                    }
+                });
+            })
+        });
+    </script>
+}

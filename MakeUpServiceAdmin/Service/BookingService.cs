@@ -31,16 +31,14 @@ namespace MakeUpServiceAdmin.Service
             queryParams.Add($"pageSize={model.PageSize}");
 
             var queryString = queryParams.Any() ? "?" + string.Join("&", queryParams) : "";
-            var response = await _httpClient.PostAsync($"api/admin/booking/search{queryString}", null);
+            var response = await _httpClient.PostAsync($"api/admin/bookings/search{queryString}", null);
             if (response.IsSuccessStatusCode)
             {
                 var bookings = await response.Content.ReadFromJsonAsync<PaginatedResponse<BookingSummaryDto>>();
-                return bookings;
+                return bookings ?? new PaginatedResponse<BookingSummaryDto> { Data = new List<BookingSummaryDto>() };
             }
-            else
-            {
-                return new PaginatedResponse<BookingSummaryDto>();
-            }
+
+            return new PaginatedResponse<BookingSummaryDto> { Data = new List<BookingSummaryDto>() };
 
         }
         public async Task<BookingDetailsDto> GetBookingDetailsAsync(int bookingID)
@@ -58,7 +56,7 @@ namespace MakeUpServiceAdmin.Service
         }
         public async Task<(bool IsSuccess, string Message)> CreateBookingAsync(CreateBookingVm model, string idempotencyKey)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, "api/admin/bookings/create")
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/admin/bookings/manual-booking")
             {
                 Content = JsonContent.Create(model)
             };
@@ -86,7 +84,7 @@ namespace MakeUpServiceAdmin.Service
             else
             {
                 var errorMessage = await response.Content.ReadFromJsonAsync<ApiResponse>();
-                return (false, $"Failed to update booking status. Status code: {response.StatusCode}. Error: {errorMessage?.Message ?? "Unknown error"}");
+                return (false, errorMessage?.Message ?? "Failed to update booking status.");
             }
         }
     }

@@ -1,6 +1,15 @@
-﻿@{
+@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
-
-<p>Use this page to detail your site's privacy policy.</p>
+@section Styles {
+    <style>
+        .ag-glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 40px;}
+    </style>
+}
+<div class="container py-5">
+    <div class="ag-glass-panel text-white">
+        <h2 class="mb-4" style="color: #6366f1;">Privacy Policy</h2>
+        <p>Your privacy is important to us. This portal is strictly for authorized administrative use.</p>
+        <p>All client data, booking histories, and travel itineraries are encrypted and stored securely according to our data protection guidelines.</p>
+    </div>
+</div>
