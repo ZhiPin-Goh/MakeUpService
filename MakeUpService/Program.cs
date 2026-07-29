@@ -1,7 +1,22 @@
+using MakeUpService.Service;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddHttpClient<AreaService>(c => // Area Service
+    c.BaseAddress = new Uri(builder.Configuration["RestApi:BaseUrl"]));
+builder.Services.AddHttpClient<BannersService>(c => // Banners Service
+    c.BaseAddress = new Uri(builder.Configuration["RestApi:BaseUrl"]));
+builder.Services.AddHttpClient<ClientMakeUpService>(c => // Client MakeUp Service
+    c.BaseAddress = new Uri(builder.Configuration["RestApi:BaseUrl"]));
+builder.Services.AddHttpClient<FeedbackService>(c => // Feedback Service
+    c.BaseAddress = new Uri(builder.Configuration["RestApi:BaseUrl"]));
+builder.Services.AddHttpClient<BookingService>(c => // Booking Service
+    c.BaseAddress = new Uri(builder.Configuration["RestApi:BaseUrl"]));
+builder.Services.AddHttpClient<ChatService>(c => // Chat Service
+    c.BaseAddress = new Uri(builder.Configuration["RestApi:BaseUrl"]));
 
 var app = builder.Build();
 
