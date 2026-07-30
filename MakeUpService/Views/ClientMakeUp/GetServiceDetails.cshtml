@@ -1,0 +1,197 @@
+@model MakeUpService.Dto.ServiceDto.ServiceDetailsDto
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<style>
+    .details-page-container {
+        padding: 4rem 1.5rem;
+        max-width: 1440px;
+        margin: 0 auto;
+    }
+    @@media (min-width: 768px) {
+        .details-page-container { padding: 6rem 3rem; }
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        color: var(--color-secondary);
+        text-decoration: none;
+        transition: color 0.3s;
+        margin-bottom: 3rem;
+        font-family: var(--font-sans);
+        font-weight: 500;
+    }
+    .back-link:hover {
+        color: var(--color-primary);
+    }
+    .back-link-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-right: 0.5rem;
+        transition: transform 0.3s;
+    }
+    .back-link:hover .back-link-icon {
+        transform: translateX(-4px);
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4rem;
+        margin-bottom: 6rem;
+    }
+    @@media (min-width: 1024px) {
+        .details-grid { 
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6rem;
+        }
+    }
+
+    .details-image-container {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        box-shadow: 0 10px 20px -5px rgba(212, 175, 55, 0.1), 0 8px 10px -6px rgba(212, 175, 55, 0.1);
+        background-color: var(--color-surface-container-high);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .details-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .details-image-placeholder {
+        color: var(--color-secondary);
+        font-family: var(--font-sans);
+        font-size: 1rem;
+    }
+
+    .details-content-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .details-badge {
+        display: inline-block;
+        padding: 0.375rem 1rem;
+        background-color: rgba(212, 163, 115, 0.1);
+        color: var(--color-primary);
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+        font-weight: 600;
+        border-radius: 9999px;
+        margin-bottom: 1.5rem;
+        width: fit-content;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .details-title {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        color: var(--color-on-background);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+    @@media (min-width: 768px) {
+        .details-title { font-size: 3.5rem; }
+    }
+
+    .details-price {
+        font-family: var(--font-sans);
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--color-primary);
+        margin-bottom: 2rem;
+    }
+
+    .details-desc {
+        font-family: var(--font-sans);
+        font-size: 1.125rem;
+        color: var(--color-secondary);
+        margin-bottom: 2.5rem;
+        line-height: 1.75;
+    }
+
+    .details-duration {
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        color: var(--color-secondary);
+        margin-bottom: 3rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-book-large {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--color-primary);
+        color: var(--color-on-primary);
+        padding: 1.25rem 2.5rem;
+        border-radius: 9999px;
+        font-family: var(--font-sans);
+        font-size: 1.125rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        width: 100%;
+        border: none;
+        cursor: pointer;
+    }
+    @@media (min-width: 768px) {
+        .btn-book-large { width: auto; align-self: flex-start; }
+    }
+    .btn-book-large:hover {
+        background-color: var(--color-primary-container);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="details-page-container">
+    <a href="/services/my-services" class="back-link">
+        <i data-lucide="arrow-left" class="back-link-icon"></i>
+        Back to Services
+    </a>
+
+    <div class="details-grid">
+        <div data-aos="fade-right" class="details-image-container">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img alt="@Model.Name" class="details-image" src="@Model.ImageUrl" />
+            }
+            else
+            {
+                <span class="details-image-placeholder">No image available</span>
+            }
+        </div>
+
+        <div data-aos="fade-left" class="details-content-wrapper">
+            <span class="details-badge">Professional</span>
+            <h1 class="details-title">@Model.Name</h1>
+            <p class="details-price">RM @Model.Price</p>
+            <p class="details-desc">@Model.Description</p>
+            <p class="details-duration">
+                <i data-lucide="clock" class="w-5 h-5 text-primary"></i>
+                <span>Estimated Duration:</span> @Model.EstimatedDurationMinutes <span>minutes</span>
+            </p>
+            
+            <a href="/booking/my-bookings" class="btn-book-large">
+                Book Now
+            </a>
+        </div>
+    </div>
+</div>

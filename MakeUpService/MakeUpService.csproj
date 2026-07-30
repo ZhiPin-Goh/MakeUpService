@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="makeupserviceuser\assets\.aistudio\.gitignore" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Hashids.net" Version="1.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>

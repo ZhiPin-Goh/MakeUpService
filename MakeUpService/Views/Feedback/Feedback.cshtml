@@ -1,0 +1,291 @@
+@{
+    ViewData["Title"] = "Feedback & Contact Us";
+}
+
+<style>
+    /* CSS for Feedback Form matching Booking Form aesthetic */
+    .feedback-page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .feedback-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .feedback-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: var(--color-surface);
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        border: 1px solid rgba(212, 196, 183, 0.4);
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-on-surface-variant);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    
+    .feedback-title {
+        font-family: var(--font-headline);
+        font-size: 2.5rem;
+        color: var(--color-on-surface);
+        margin: 0 0 1rem 0;
+        font-weight: 400;
+    }
+    
+    .feedback-subtitle {
+        color: var(--color-on-surface-variant);
+        font-size: 1rem;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+    
+    .feedback-card {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.8) 0%, rgba(250, 248, 246, 0.9) 100%);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(212, 196, 183, 0.5);
+        border-radius: 1.5rem;
+        padding: 2rem;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    @@media (min-width: 768px) {
+        .form-grid.two-cols {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .feedback-card {
+            padding: 3rem;
+        }
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .form-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-on-surface);
+    }
+    
+    .form-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-input-icon {
+        position: absolute;
+        left: 1rem;
+        width: 1.25rem;
+        height: 1.25rem;
+        color: var(--color-on-surface-variant);
+        opacity: 0.7;
+    }
+    
+    .form-input {
+        width: 100%;
+        background-color: var(--color-surface-container-lowest);
+        border: 1px solid rgba(212, 196, 183, 0.6);
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem 0.75rem 3rem;
+        font-family: var(--font-body);
+        font-size: 1rem;
+        color: var(--color-on-surface);
+        transition: all 0.2s;
+    }
+    
+    textarea.form-input {
+        padding: 1rem 1rem 1rem 3rem;
+        resize: vertical;
+        min-height: 120px;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 4px rgba(189, 154, 115, 0.1);
+    }
+    
+    .btn-submit {
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: 9999px;
+        padding: 1rem 2rem;
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 1rem;
+    }
+    
+    .btn-submit:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -10px rgba(189, 154, 115, 0.5);
+    }
+    
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    .feedback-message {
+        text-align: center;
+        font-size: 0.875rem;
+        font-weight: 700;
+        margin-top: 1rem;
+        min-height: 1.25rem;
+    }
+</style>
+
+<div class="feedback-page-container">
+    <div class="feedback-header">
+        <span class="feedback-badge">
+            <i data-lucide="message-square" style="width: 1rem; height: 1rem; color: var(--color-primary);"></i>
+            <span>We Value Your Voice</span>
+        </span>
+        <h1 class="feedback-title">
+            Feedback & Contact Us
+        </h1>
+        <p class="feedback-subtitle">
+            Whether you have a question about our services or want to share your experience, we're here to listen.
+        </p>
+    </div>
+
+    <div class="feedback-card">
+        <form id="feedback-form">
+            <div class="form-grid two-cols">
+                <!-- Name -->
+                <div class="form-group">
+                    <label class="form-label" for="Name">Full Name</label>
+                    <div class="form-input-wrapper">
+                        <i data-lucide="user" class="form-input-icon"></i>
+                        <input class="form-input" type="text" id="Name" name="Name" placeholder="Your Name" required />
+                    </div>
+                </div>
+
+                <!-- Contact Number -->
+                <div class="form-group">
+                    <label class="form-label" for="ContactNumber">Phone Number</label>
+                    <div class="form-input-wrapper">
+                        <i data-lucide="phone" class="form-input-icon"></i>
+                        <input class="form-input" type="tel" id="ContactNumber" name="ContactNumber" placeholder="e.g. 0123456789" required />
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-grid" style="margin-top: 1.5rem;">
+                <!-- Email (Optional) -->
+                <div class="form-group">
+                    <label class="form-label" for="Email">Email Address (Optional)</label>
+                    <div class="form-input-wrapper">
+                        <i data-lucide="mail" class="form-input-icon"></i>
+                        <input class="form-input" type="email" id="Email" name="Email" placeholder="your@email.com" />
+                    </div>
+                </div>
+
+                <!-- Title / Subject -->
+                <div class="form-group">
+                    <label class="form-label" for="Title">Subject</label>
+                    <div class="form-input-wrapper">
+                        <i data-lucide="type" class="form-input-icon"></i>
+                        <input class="form-input" type="text" id="Title" name="Title" placeholder="What is this regarding?" required maxlength="150" />
+                    </div>
+                </div>
+
+                <!-- Description / Message -->
+                <div class="form-group">
+                    <label class="form-label" for="Description">Message</label>
+                    <div class="form-input-wrapper" style="align-items: flex-start;">
+                        <i data-lucide="message-circle" class="form-input-icon" style="top: 1.25rem;"></i>
+                        <textarea class="form-input" id="Description" name="Description" placeholder="Please share your feedback or inquiry..." required maxlength="1000"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="btn-submit">
+                <span>Submit Feedback</span>
+                <i data-lucide="send" style="width: 1rem; height: 1rem;"></i>
+            </button>
+            <p id="feedback-message" class="feedback-message"></p>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const $form = $('#feedback-form');
+            const $btn = $('#submit-btn');
+            const $msg = $('#feedback-message');
+
+            $form.on('submit', function (e) {
+                e.preventDefault();
+                $btn.prop('disabled', true);
+                
+                let currentLang = localStorage.getItem('site_lang') || 'EN';
+                let sendingText = currentLang === 'CN' ? '正在提交...' : 'Submitting...';
+                
+                $btn.find('span').text(sendingText);
+                $msg.text('').removeClass('text-emerald-500 text-red-500');
+
+                var formData = {
+                    Title: $('#Title').val(),
+                    Description: $('#Description').val(),
+                    Name: $('#Name').val(),
+                    Email: $('#Email').val(),
+                    ContactNumber: $('#ContactNumber').val()
+                };
+
+                $.ajax({
+                    url: '/feedback/submit',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function (res) {
+                        if (res.success) {
+                            $msg.text(res.message).addClass('text-emerald-500');
+                            $form[0].reset();
+                        } else {
+                            $msg.text(res.message || (currentLang === 'CN' ? '提交失败。' : 'Submission failed.')).addClass('text-red-500');
+                        }
+                    },
+                    error: function () {
+                        $msg.text(currentLang === 'CN' ? '网络错误，请重试。' : 'Network error. Please try again.').addClass('text-red-500');
+                    },
+                    complete: function () {
+                        $btn.prop('disabled', false);
+                        $btn.find('span').text(currentLang === 'CN' ? '提交反馈' : 'Submit Feedback');
+                    }
+                });
+            });
+        });
+    </script>
+}

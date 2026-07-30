@@ -1,0 +1,167 @@
+@{
+    ViewData["Title"] = "Terms & Conditions";
+}
+
+<style type="text/css">
+    .terms-page-container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        max-width: 56rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    @@media (min-width: 768px) {
+        .terms-page-container {
+            padding-left: 3rem;
+            padding-right: 3rem;
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+        }
+    }
+    
+    .terms-header {
+        margin-bottom: 3rem;
+        text-align: left;
+    }
+    
+    .terms-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-secondary);
+        font-family: var(--font-sans);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .terms-title {
+        font-family: var(--font-display);
+        font-size: 2.25rem;
+        color: var(--color-primary);
+        margin-bottom: 1rem;
+    }
+    @@media (min-width: 768px) {
+        .terms-title {
+            font-size: 3rem;
+        }
+    }
+    
+    .terms-content-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+        color: var(--color-on-surface);
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        line-height: 1.625;
+    }
+    
+    .terms-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .terms-section-title {
+        font-family: var(--font-headline);
+        font-size: 1.25rem;
+        color: var(--color-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .terms-list {
+        list-style-type: disc;
+        padding-left: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        color: var(--color-on-surface-variant);
+    }
+</style>
+
+<div class="terms-page-container">
+    <!-- Page Header -->
+    <div class="terms-header">
+        <span class="terms-badge">
+            <i data-lucide="file-text" style="width: 1rem; height: 1rem; color: var(--color-primary);"></i>
+            <span>Legal & Policies</span>
+        </span>
+        <h1 class="terms-title">
+            <span>Terms & Conditions</span>
+        </h1>
+    </div>
+
+    <!-- Main Content Sections -->
+    <div class="terms-content-container">
+
+        <!-- Section 1 -->
+        <section class="terms-section">
+            <h2 class="terms-section-title">
+                <span class="w-6 h-6 rounded-full bg-primary-container/10 text-primary text-xs flex items-center justify-center font-bold">1</span>
+                <span>Transportation Fees and Location Changes</span>
+            </h2>
+            <ul class="terms-list">
+                <li><span>Transportation fees are RM2/RM1 per 10km, plus a zone fee (RM10-50), calculated based on the distance between you and our location.</span></li>
+                <li><span>Transportation fees will be automatically calculated based on the distance to the location you provided at the time of booking.</span></li>
+                <li><span>If you change your makeup location, please inform the makeup artist immediately. Shirley Makeup reserves the right to charge additional transportation fees if the new location is further away.</span></li>
+            </ul>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="terms-section">
+            <h2 class="terms-section-title">
+                <span class="w-6 h-6 rounded-full bg-primary-container/10 text-primary text-xs flex items-center justify-center font-bold">2</span>
+                <span>Health, Allergies, and Liability</span>
+            </h2>
+            <ul class="terms-list">
+                <li><span>Clients are responsible for informing the makeup artist of any skin conditions, sensitivities, allergies, or infectious diseases (e.g., conjunctivitis/red eye) before the makeup session.</span></li>
+                <li><span>Shirley Makeup uses high-quality professional products and tools. However, we are not responsible for any allergic reactions, skin irritation, or complications that occur during or after the service.</span></li>
+            </ul>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="terms-section">
+            <h2 class="terms-section-title">
+                <span class="w-6 h-6 rounded-full bg-primary-container/10 text-primary text-xs flex items-center justify-center font-bold">3</span>
+                <span>Late Arrivals and Cancellations</span>
+            </h2>
+            <ul class="terms-list">
+                <li><span>Late Arrivals: The makeup artist will arrive on time. If the customer is more than [30 minutes] late, the makeup artist has the right to shorten the makeup time to avoid delaying subsequent appointments, or cancel the appointment without refunding the deposit.</span></li>
+                <li><span>Late Arrival: If the delay exceeds 45 minutes, Shirley Makeup reserves the right to leave the premises to attend the next scheduled appointment. In such cases, the absent client's session will be forfeited, and the full agreed balance for all booked pax remains payable.</span></li>
+            </ul>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="terms-section">
+            <h2 class="terms-section-title">
+                <span class="w-6 h-6 rounded-full bg-primary-container/10 text-primary text-xs flex items-center justify-center font-bold">4</span>
+                <span>Payment of Final Balance</span>
+            </h2>
+            <ul class="terms-list">
+                <li><span>The remaining balance can be paid in full on the day of the service. You can pay in cash or via instant online transfer before the makeup artist leaves.</span></li>
+                <li><span>Payment must be completed at least 5 days after the appointment date. If payment is not received by the due date, Shirley Makeup reserves the right to retain the deposit.</span></li>
+            </ul>
+        </section>
+
+        <!-- Section 5 -->
+        <section class="terms-section">
+            <h2 class="terms-section-title">
+                <span class="w-6 h-6 rounded-full bg-primary-container/10 text-primary text-xs flex items-center justify-center font-bold">5</span>
+                <span>Appointment Confirmation and Communication</span>
+            </h2>
+            <ul class="terms-list">
+                <li><span>Shirley Makeup will confirm your appointment via email or WhatsApp within 24 hours of receiving your appointment request. If you do not receive a confirmation message, please contact Shirley Makeup immediately.</span></li>
+                <li><span>It is your responsibility to provide accurate contact information and check your email or WhatsApp regularly for the latest information regarding your appointment.</span></li>
+                <li><span>Shirley Makeup reserves the right to send important information, changes, or updates regarding your appointment via email or WhatsApp. Please check these channels regularly.</span></li>
+            </ul>
+        </section>
+
+    </div>
+</div>

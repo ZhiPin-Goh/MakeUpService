@@ -176,7 +176,8 @@
                 </div>
                 <div class="form-col-span-2">
                     <label class="form-label">Location Details</label>
-                    <input type="text" name="LocationAddress" class="input-glow" placeholder="Hotel Name, suite, or studio address" required>
+                    <input type="text" id="location-address" name="LocationAddress" class="input-glow" placeholder="Hotel Name, suite, or studio address" autocomplete="off" list="location-suggestions" required>
+                    <datalist id="location-suggestions"></datalist>
                 </div>
                 <div class="form-col-span-2 form-col-span-sm-1">
                     <label class="form-label">Unit (Optional)</label>
@@ -229,6 +230,36 @@
                         $select.append($('<option></option>').val(id).text(name + ' (+ RM ' + parseFloat(basePrice).toFixed(2) + ' Base Price)'));
                     });
                 }
+            });
+
+            // Location Address Autocomplete via datalist
+            var locationTimer = null;
+            $('#location-address').on('input', function() {
+                clearTimeout(locationTimer);
+                var query = $(this).val().trim();
+                if (query.length < 3) {
+                    $('#location-suggestions').empty();
+                    return;
+                }
+                locationTimer = setTimeout(function() {
+                    $.getJSON('/fee/searchlocation', { query: query }, function(res) {
+                        var $datalist = $('#location-suggestions');
+                        $datalist.empty();
+                        try {
+                            var data = typeof res === 'string' ? JSON.parse(res) : res;
+                            if (data && Array.isArray(data) && data.length > 0) {
+                                $.each(data, function(i, item) {
+                                    var label = item.display_name || item.display_address || item.description || item.address || item;
+                                    if (label) {
+                                        $datalist.append($('<option></option>').val(label));
+                                    }
+                                });
+                            }
+                        } catch(e) {
+                            console.error('Error parsing location suggestions', e);
+                        }
+                    });
+                }, 350);
             });
 
             $('#standalone-create-booking').on("submit", function(e){

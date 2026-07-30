@@ -1,0 +1,910 @@
+@{
+    ViewData["Title"] = "Book an Appointment";
+}
+
+<style type="text/css">
+    .booking-page-container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        max-width: 1440px;
+        margin: 0 auto;
+    }
+    @@media (min-width: 768px) {
+        .booking-page-container {
+            padding-left: 3rem;
+            padding-right: 3rem;
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+        }
+    }
+    
+    .booking-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        max-width: 48rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .booking-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-secondary);
+        font-family: var(--font-sans);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .booking-title {
+        font-family: var(--font-headline);
+        font-size: 2.25rem;
+        color: var(--color-primary);
+        margin-bottom: 1rem;
+    }
+    @@media (min-width: 768px) {
+        .booking-title { font-size: 3rem; }
+    }
+    
+    .booking-subtitle {
+        font-family: var(--font-sans);
+        font-size: 1.125rem;
+        color: var(--color-on-surface-variant);
+        line-height: 1.625;
+    }
+    
+    .booking-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+    @@media (min-width: 1024px) {
+        .booking-grid { grid-template-columns: repeat(12, 1fr); }
+    }
+    
+    .booking-form-col {
+        background-color: var(--color-surface-container-lowest);
+        border-radius: 1.5rem;
+        border: 1px solid rgba(212, 196, 183, 0.3);
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(95, 94, 94, 0.04);
+        position: relative;
+        overflow: hidden;
+    }
+    @@media (min-width: 768px) {
+        .booking-form-col { padding: 2.5rem; }
+    }
+    @@media (min-width: 1024px) {
+        .booking-form-col { grid-column: span 7 / span 7; }
+    }
+    
+    .booking-blur-effect {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 16rem;
+        height: 16rem;
+        background-color: rgba(212, 175, 55, 0.05);
+        border-radius: 50%;
+        filter: blur(24px);
+        transform: translateY(-50%) translateX(50%);
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    .booking-form {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .form-step {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .form-step-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-sans);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--color-primary);
+        font-weight: 700;
+        border-bottom: 1px solid rgba(212, 196, 183, 0.3);
+        padding-bottom: 0.5rem;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    @@media (min-width: 768px) {
+        .form-grid { grid-template-columns: repeat(2, 1fr); }
+        .col-span-2 { grid-column: span 2 / span 2; }
+    }
+    
+    .form-input-wrapper {
+        position: relative;
+    }
+    
+    .form-input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(80, 69, 59, 0.5);
+        width: 1rem;
+        height: 1rem;
+    }
+    
+    .autocomplete-dropdown {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        margin-top: 0.25rem;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-surface-container-highest);
+        border-radius: 0.75rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow-y: auto;
+        max-height: 15rem;
+        z-index: 50;
+        display: none;
+        list-style: none;
+        padding: 0;
+    }
+    .autocomplete-dropdown.is-visible {
+        display: block;
+    }
+    .autocomplete-item {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        color: var(--color-on-surface);
+        cursor: pointer;
+        transition: background-color 0.2s;
+        border-bottom: 1px solid var(--color-surface-container-highest);
+    }
+    .autocomplete-item:last-child {
+        border-bottom: none;
+    }
+    .autocomplete-item:hover {
+        background-color: var(--color-surface-container-highest);
+    }
+
+    .form-input {
+        width: 100%;
+        background-color: var(--color-surface);
+        border: 1px solid rgba(212, 196, 183, 0.4);
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem 0.75rem 2.75rem;
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+        color: var(--color-on-surface);
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+    .form-input::placeholder { color: rgba(80, 69, 59, 0.4); }
+    .form-input:focus {
+        outline: none;
+        border-color: rgba(212, 175, 55, 0.5);
+        box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+    }
+    
+    .form-select {
+        padding-left: 1rem;
+        appearance: none;
+        cursor: pointer;
+    }
+    
+    .form-select-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-on-surface-variant);
+        pointer-events: none;
+        width: 1rem;
+        height: 1rem;
+    }
+    
+    .pax-control {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: var(--color-surface);
+        padding: 0.875rem;
+        border: 1px solid rgba(212, 196, 183, 0.4);
+        border-radius: 0.75rem;
+    }
+    
+    .pax-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+        color: var(--color-on-surface);
+    }
+    
+    .pax-buttons {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .btn-pax {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        background-color: var(--color-surface-container);
+        color: var(--color-on-surface);
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .btn-pax:hover {
+        background-color: var(--color-primary-container);
+        color: white;
+    }
+    
+    .pax-input {
+        width: 3rem;
+        text-align: center;
+        background: transparent;
+        border: none;
+        font-family: var(--font-headline);
+        font-size: 1rem;
+        color: var(--color-on-surface);
+    }
+    .pax-input:focus { outline: none; }
+    
+    .btn-submit {
+        width: 100%;
+        background-color: var(--color-primary-container);
+        color: white;
+        border-radius: 9999px;
+        padding: 1rem;
+        font-family: var(--font-sans);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .btn-submit:hover:not(:disabled) {
+        background-color: var(--color-primary);
+    }
+    .btn-submit:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .btn-submit i { transition: transform 0.3s; }
+    .btn-submit:hover:not(:disabled) i { transform: translateX(0.25rem); }
+    
+    .booking-summary-col {
+        position: sticky;
+        top: 7rem;
+    }
+    @@media (min-width: 1024px) {
+        .booking-summary-col { grid-column: span 5 / span 5; }
+    }
+    
+    .summary-card {
+        background-color: var(--color-surface-container-lowest);
+        border-radius: 1.5rem;
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        padding: 1.5rem;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+    @@media (min-width: 768px) {
+        .summary-card { padding: 2rem; }
+    }
+    
+    .summary-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(212, 196, 183, 0.3);
+        margin-bottom: 1.5rem;
+    }
+    
+    .summary-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-primary);
+        font-family: var(--font-headline);
+        font-size: 1rem;
+        font-weight: 700;
+    }
+    
+    .summary-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+        color: var(--color-on-surface-variant);
+        margin-bottom: 1.5rem;
+    }
+    
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    
+    .summary-label-col {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .summary-label { font-weight: 500; color: var(--color-on-surface); }
+    .summary-sublabel { font-size: 0.6875rem; color: rgba(80, 69, 59, 0.7); }
+    .summary-price { font-weight: 700; color: var(--color-on-surface); }
+    .summary-price-free { color: #059669; }
+    
+    .summary-empty {
+        text-align: center;
+        padding: 1.5rem 0;
+        color: rgba(80, 69, 59, 0.6);
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+    }
+    
+    .summary-total-box {
+        background-color: rgba(239, 237, 237, 0.6);
+        border-radius: 1rem;
+        padding: 1.25rem;
+        border: 1px solid rgba(212, 196, 183, 0.2);
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .total-label { font-size: 0.875rem; font-weight: 600; }
+    .total-price {
+        font-family: var(--font-headline);
+        font-size: 1.25rem;
+        color: var(--color-primary);
+        font-weight: 700;
+    }
+    @@media (min-width: 768px) {
+        .total-price { font-size: 1.5rem; }
+    }
+    
+    .safety-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.625rem;
+        font-size: 0.75rem;
+        color: rgba(80, 69, 59, 0.8);
+        background-color: rgba(16, 185, 129, 0.1);
+        padding: 0.875rem;
+        border-radius: 0.75rem;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    
+    .map-container {
+        margin-top: 1.5rem;
+        border-radius: 1rem;
+        background-color: var(--color-surface);
+        border: 1px solid rgba(212, 196, 183, 0.4);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        min-height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .map-placeholder {
+        text-align: center;
+        color: rgba(80, 69, 59, 0.5);
+        transition: opacity 0.3s;
+    }
+    .map-placeholder-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        margin: 0 auto 0.75rem auto;
+        opacity: 0.6;
+    }
+    .map-placeholder p {
+        font-size: 0.875rem;
+        margin: 0;
+        font-family: var(--font-sans);
+    }
+    .map-iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        opacity: 0;
+        transition: opacity 0.5s;
+        display: none;
+    }
+    .map-iframe.is-visible {
+        display: block;
+        opacity: 1;
+    }
+</style>
+
+<div class="booking-page-container">
+    <!-- Page Header -->
+    <div class="booking-header">
+        <span class="booking-badge">
+            <i data-lucide="calculator" style="width: 1rem; height: 1rem; color: var(--color-primary);"></i>
+            <span>Instant Transparent Estimate</span>
+        </span>
+        <h1 class="booking-title">
+            Request a Booking
+        </h1>
+        <p class="booking-subtitle">
+            Select your location, service, and time to instantly calculate your total price and deposit.
+        </p>
+    </div>
+
+    <!-- Main 2-Column Calculator & Form Grid -->
+    <div class="booking-grid">
+        <!-- Left Form Column (7 Cols) -->
+        <div class="booking-form-col">
+            <div class="booking-blur-effect"></div>
+
+            <form id="booking-form" class="booking-form">
+                <!-- Step 1: Personal Details -->
+                <div class="form-step">
+                    <label class="form-step-title">
+                        <i data-lucide="user" style="width: 1rem; height: 1rem;"></i>
+                        <span>Step 1: Contact Information</span>
+                    </label>
+                    <div class="form-grid">
+                        <div class="form-input-wrapper">
+                            <i data-lucide="user" class="form-input-icon"></i>
+                            <input class="form-input" placeholder="Full Name" type="text" id="Name" name="Name" required />
+                        </div>
+                        <div class="form-input-wrapper">
+                            <i data-lucide="mail" class="form-input-icon"></i>
+                            <input class="form-input" placeholder="Email Address" type="email" id="Email" name="Email" required />
+                        </div>
+                        <div class="form-input-wrapper col-span-2">
+                            <i data-lucide="phone" class="form-input-icon"></i>
+                            <input class="form-input" placeholder="Phone Number / WhatsApp (e.g. 0123456789)" type="tel" id="PhoneNumber" name="PhoneNumber" required />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Service & Pax -->
+                <div class="form-step">
+                    <label class="form-step-title">
+                        <i data-lucide="sparkles" style="width: 1rem; height: 1rem;"></i>
+                        <span>Step 2: Service & Number of Pax</span>
+                    </label>
+                    <div class="form-grid">
+                        <div class="form-input-wrapper col-span-2">
+                            <select id="ServiceID" name="ServiceID" class="form-input form-select js-calc-trigger" required>
+                                <option value="" disabled selected>Select a Service...</option>
+                                <!-- Loaded via JS -->
+                            </select>
+                            <i data-lucide="chevron-down" class="form-select-icon"></i>
+                        </div>
+
+                        <div class="form-input-wrapper col-span-2 pax-control">
+                            <div class="pax-label">
+                                <i data-lucide="users" style="width: 1rem; height: 1rem; color: var(--color-primary);"></i>
+                                <span>Number of Guests / Clients:</span>
+                            </div>
+                            <div class="pax-buttons">
+                                <button type="button" id="pax-minus" class="btn-pax">-</button>
+                                <input type="number" id="Pax" name="Pax" value="1" min="1" max="5" class="pax-input js-calc-trigger" readonly />
+                                <button type="button" id="pax-plus" class="btn-pax">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Date & Call Time -->
+                <div class="form-step">
+                    <label class="form-step-title">
+                        <i data-lucide="calendar" style="width: 1rem; height: 1rem;"></i>
+                        <span>Step 3: Date & Time</span>
+                    </label>
+                    <div class="form-grid">
+                        <div class="form-input-wrapper">
+                            <input class="form-input form-select" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Now.AddMonths(3).ToString("yyyy-MM-dd")" id="AppointmentDate" name="AppointmentDate" required />
+                        </div>
+                        <div class="form-input-wrapper">
+                            <input class="form-input form-select" type="time" min="03:00" max="21:00" id="AppointmentTime" name="AppointmentTime" required />
+                        </div>
+                        <div class="col-span-2" style="font-size: 0.75rem; color: rgba(80, 69, 59, 0.7); display: flex; align-items: center; gap: 0.25rem; margin-top: -0.25rem;">
+                            <i data-lucide="info" style="width: 0.875rem; height: 0.875rem;"></i>
+                            <span>Note: Appointments are not available between 21:00 and 02:59.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Location & Area Selection -->
+                <div class="form-step">
+                    <label class="form-step-title">
+                        <i data-lucide="map-pin" style="width: 1rem; height: 1rem;"></i>
+                        <span>Step 4: Area & Location Address</span>
+                    </label>
+                    <div class="form-grid">
+                        <div class="form-input-wrapper col-span-2">
+                            <select id="AreaID" name="AreaID" class="form-input form-select js-calc-trigger">
+                                <option value="" selected>Select an Area (Optional)</option>
+                                <!-- Loaded via JS -->
+                            </select>
+                            <i data-lucide="chevron-down" class="form-select-icon"></i>
+                        </div>
+
+                        <div class="form-input-wrapper">
+                            <i data-lucide="home" class="form-input-icon"></i>
+                            <input class="form-input" placeholder="Unit / House / Hotel Name" type="text" id="Unit" name="Unit" />
+                        </div>
+
+                        <div class="form-input-wrapper custom-dropdown-container" style="position: relative;">
+                            <i data-lucide="map-pin" class="form-input-icon"></i>
+                            <input class="form-input js-calc-trigger" placeholder="Full Street Address" type="text" id="LocationAddress" name="LocationAddress" autocomplete="off" required />
+                            <ul id="location-suggestions" class="autocomplete-dropdown">
+                                <!-- Populated via AJAX -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacy Policy Checkbox -->
+                <div style="padding-top: 1.5rem; margin-bottom: -0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="checkbox" id="PrivacyPolicyCheck" name="PrivacyPolicyCheck" required style="width: 1rem; height: 1rem; accent-color: var(--color-primary); cursor: pointer;" />
+                    <label for="PrivacyPolicyCheck" style="font-size: 0.875rem; color: var(--color-on-surface); font-family: var(--font-sans); cursor: pointer;">
+                        <span>I have read and agree to the </span><a href="/privacy-policy" style="color: var(--color-primary); text-decoration: underline;"><span>Privacy Policy</span></a>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <div style="padding-top: 1.5rem;">
+                    <button type="submit" id="submit-btn" disabled class="btn-submit">
+                        <span>Submit Booking Request</span>
+                        <i data-lucide="arrow-right" style="width: 1rem; height: 1rem;"></i>
+                    </button>
+                    <p id="submit-message" style="text-align: center; font-size: 0.875rem; margin-top: 0.75rem; font-weight: 700;"></p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Right Dynamic Live Price Breakdown Column -->
+        <div class="booking-summary-col">
+            <div class="summary-card">
+                <div class="summary-header">
+                    <div class="summary-title">
+                        <i data-lucide="calculator" style="width: 1.25rem; height: 1.25rem; color: #f59e0b;"></i>
+                        <span>Live Price Breakdown</span>
+                    </div>
+                </div>
+
+                <!-- Itemized Calculation List -->
+                <div id="price-breakdown-container" class="summary-list" style="display: none;">
+                    <!-- Service Price -->
+                    <div class="summary-item">
+                        <div class="summary-label-col">
+                            <span id="label-service-name" class="summary-label">Service Name</span>
+                            <span id="label-service-base" class="summary-sublabel">Base Price: RM 0.00</span>
+                        </div>
+                        <span id="price-service-total" class="summary-price">RM 0.00</span>
+                    </div>
+
+                    <!-- Location Fee -->
+                    <div class="summary-item">
+                        <div class="summary-label-col">
+                            <span class="summary-label">Total Travel Fee (Negotiable)</span>
+                            <span id="label-distance" class="summary-sublabel">Distance: 0 km</span>
+                        </div>
+                        <span id="price-travel-fee" class="summary-price summary-price-free">
+                            FREE
+                        </span>
+                    </div>
+                </div>
+                
+                <div id="price-empty-state" class="summary-empty">
+                    Select a service and enter an address to calculate price.
+                </div>
+
+                <!-- Total Highlight Box -->
+                <div class="summary-total-box">
+                    <span class="total-label">Total Estimated Price:</span>
+                    <span id="price-total" class="total-price">
+                        RM 0.00
+                    </span>
+                </div>
+
+                <!-- Safety & Guarantee Note -->
+                <div class="safety-note">
+                    <i data-lucide="shield-check" style="width: 1rem; height: 1rem; color: #059669; flex-shrink: 0; margin-top: 0.125rem;"></i>
+                    <span>Zero hidden fees. Price calculated securely based on official rates.</span>
+                </div>
+                <div class="safety-note" style="margin-top: 0.75rem; background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2); color: rgba(30, 64, 175, 0.8);">
+                    <i data-lucide="info" style="width: 1rem; height: 1rem; color: #3b82f6; flex-shrink: 0; margin-top: 0.125rem;"></i>
+                    <span>Booking request only. You will not be charged now.</span>
+                </div>
+            </div>
+
+            <!-- Map Container -->
+            <div class="map-container">
+                <!-- Placeholder -->
+                <div id="map-placeholder" class="map-placeholder">
+                    <i data-lucide="globe" class="map-placeholder-icon"></i>
+                    <p>Map visualization will appear when a destination is entered.</p>
+                </div>
+                <!-- Iframe Map -->
+                <iframe id="map-iframe" class="map-iframe" loading="lazy" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // 1. Populate Dropdowns
+            function loadServices() {
+                $.ajax({
+                    url: '/services/home-services', // Returns List<ServiceDto>
+                    type: 'GET',
+                    success: function(data) {
+                        const $select = $('#ServiceID');
+                        data.forEach(service => {
+                            $select.append(`<option value="${service.serviceID}">${service.name} (RM ${service.price})</option>`);
+                        });
+                    }
+                });
+            }
+
+            function loadAreas() {
+                $.ajax({
+                    url: '/area/areas', // Returns List<Area>
+                    type: 'GET',
+                    success: function(data) {
+                        const $select = $('#AreaID');
+                        data.forEach(area => {
+                            $select.append(`<option value="${area.areaID}">${area.name}</option>`);
+                        });
+                    }
+                });
+            }
+
+            loadServices();
+            loadAreas();
+
+            // 2. Handle Pax Counter
+            $('#pax-minus').click(function() {
+                let pax = parseInt($('#Pax').val());
+                if (pax > 1) {
+                    $('#Pax').val(pax - 1).trigger('change');
+                }
+            });
+
+            $('#pax-plus').click(function() {
+                let pax = parseInt($('#Pax').val());
+                if (pax < 5) { // based on max constraint
+                    $('#Pax').val(pax + 1).trigger('change');
+                }
+            });
+
+            // 3. Debounced Price Calculation
+            let calcTimeout;
+            $('.js-calc-trigger').on('change input', function() {
+                clearTimeout(calcTimeout);
+                calcTimeout = setTimeout(calculatePrice, 500);
+            });
+
+            function calculatePrice() {
+                const serviceId = $('#ServiceID').val();
+                const address = $('#LocationAddress').val();
+                
+                if (!serviceId) {
+                    return; // Requires at least service ID
+                }
+
+                const requestData = {
+                    ServiceID: serviceId,
+                    AreaID: $('#AreaID').val() || null,
+                    Pax: $('#Pax').val(),
+                    LocationAddress: address || ''
+                };
+
+                $('#submit-btn').prop('disabled', true);
+                
+                $.ajax({
+                    url: '/booking/price',
+                    type: 'GET',
+                    data: requestData,
+                    success: function(res) {
+                        // BookingPriceDto expected
+                        $('#price-empty-state').hide();
+                        $('#price-breakdown-container').show();
+
+                        // BookingPriceDto fields:
+                        // serviceName, serviceBasePrice (per pax), areaBasePrice, distanceKm, totalTravelFee, totalPrice
+                        
+                        let currentLang = localStorage.getItem('site_lang') || 'EN';
+                        
+                        // Service row
+                        $('#label-service-name').text(res.serviceName);
+                        let basePriceLabel = currentLang === 'CN' ? '基础价格：' : 'Base Price: ';
+                        let perPaxLabel = currentLang === 'CN' ? ' / 人' : ' / pax';
+                        $('#label-service-base').text(basePriceLabel + 'RM ' + res.serviceBasePrice.toFixed(2) + perPaxLabel);
+                        
+                        // Service total = TotalPrice - TotalTravelFee (the service portion)
+                        let servicePortion = (res.totalPrice - res.totalTravelFee);
+                        $('#price-service-total').text('RM ' + servicePortion.toFixed(2));
+                        
+                        // Travel Fee row
+                        let distanceStr = currentLang === 'CN' ? '距离：' : 'Distance: ';
+                        let distanceLabel = distanceStr + res.distanceKm.toFixed(1) + ' km';
+                        if (res.areaBasePrice > 0) {
+                            let areaStr = currentLang === 'CN' ? ' | 区域基础费：RM ' : ' | Area Base: RM ';
+                            distanceLabel += areaStr + res.areaBasePrice.toFixed(2);
+                        }
+                        $('#label-distance').text(distanceLabel);
+                        
+                        if (res.totalTravelFee > 0) {
+                            $('#price-travel-fee')
+                                .text('+RM ' + res.totalTravelFee.toFixed(2))
+                                .removeClass('summary-price-free');
+                        } else {
+                            $('#price-travel-fee')
+                                .text(currentLang === 'CN' ? '免费' : 'FREE')
+                                .addClass('summary-price-free');
+                        }
+
+                        // Grand total
+                        $('#price-total').text('RM ' + res.totalPrice.toFixed(2));
+                        
+                        // Show map if there's an address
+                        var address = $('#LocationAddress').val();
+                        if (address) {
+                            var mapUrl = 'https://maps.google.com/maps?q=' + encodeURIComponent(address) + '&output=embed';
+                            $('#map-iframe').attr('src', mapUrl).addClass('is-visible');
+                            $('#map-placeholder').hide();
+                        }
+                        
+                        // Re-enable submit if form is valid
+                        $('#submit-btn').prop('disabled', false);
+                    },
+                    error: function() {
+                        // Keep disabled if error in calculation
+                        $('#submit-btn').prop('disabled', true);
+                    }
+                });
+            }
+
+            // 4. Location Address Autocomplete via Custom Dropdown
+            var locationTimer = null;
+            $('#LocationAddress').on('input', function() {
+                clearTimeout(locationTimer);
+                var query = $(this).val().trim();
+                var $suggestions = $('#location-suggestions');
+                if (query.length < 3) {
+                    $suggestions.removeClass('is-visible').empty();
+                    return;
+                }
+                locationTimer = setTimeout(function() {
+                    $.getJSON('/fee/searchlocation', { query: query }, function(res) {
+                        $suggestions.empty();
+                        try {
+                            var data = typeof res === 'string' ? JSON.parse(res) : res;
+                            if (data && Array.isArray(data) && data.length > 0) {
+                                $.each(data, function(i, item) {
+                                    var label = item.display_name || item.display_address || item.description || item.address || item;
+                                    if (label) {
+                                        var $li = $('<li></li>').addClass('autocomplete-item').text(label);
+                                        $li.on('click', function() {
+                                            $('#LocationAddress').val(label).trigger('change');
+                                            $suggestions.removeClass('is-visible');
+                                        });
+                                        $suggestions.append($li);
+                                    }
+                                });
+                                $suggestions.addClass('is-visible');
+                            } else {
+                                $suggestions.removeClass('is-visible');
+                            }
+                        } catch(e) {
+                            console.error('Error parsing location suggestions', e);
+                            $suggestions.removeClass('is-visible');
+                        }
+                    });
+                }, 350);
+            });
+
+            // Hide dropdown when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.custom-dropdown-container').length) {
+                    $('#location-suggestions').removeClass('is-visible');
+                }
+            });
+
+            // 5. Form Submission
+            $('#booking-form').on('submit', function(e) {
+                e.preventDefault();
+                
+                const $btn = $('#submit-btn');
+                const $msg = $('#submit-message');
+                
+                $btn.prop('disabled', true);
+                $msg.text('Submitting...').removeClass('text-red-500 text-emerald-500').addClass('text-on-surface-variant');
+
+                // Create UUID for Idempotency
+                const idempotencyKey = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now();
+
+                const formData = {
+                    Name: $('#Name').val(),
+                    Email: $('#Email').val(),
+                    Pax: parseInt($('#Pax').val()),
+                    PhoneNumber: $('#PhoneNumber').val(),
+                    AppointmentDate: $('#AppointmentDate').val(),
+                    ServiceID: parseInt($('#ServiceID').val()),
+                    LocationAddress: $('#LocationAddress').val(),
+                    Unit: $('#Unit').val() || null,
+                    AreaID: $('#AreaID').val() ? parseInt($('#AreaID').val()) : null,
+                    AppointmentTime: $('#AppointmentTime').val() + ':00' // Ensure TimeSpan format
+                };
+
+                $.ajax({
+                    url: '/booking/submit',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'X-Idempotency-Key': idempotencyKey
+                    },
+                    data: JSON.stringify(formData),
+                    success: function(res) {
+                        if (res.success) {
+                            $msg.text(res.message).removeClass('text-red-500 text-on-surface-variant').addClass('text-emerald-500');
+                            $('#booking-form')[0].reset();
+                            $('#price-breakdown-container').hide();
+                            $('#price-empty-state').show();
+                            $('#price-total').text('RM 0.00');
+                            
+                            // Reset map
+                            $('#map-iframe').removeClass('is-visible').attr('src', '');
+                            $('#map-placeholder').show();
+                        } else {
+                            $msg.text(res.message).removeClass('text-emerald-500 text-on-surface-variant').addClass('text-red-500');
+                            $btn.prop('disabled', false);
+                        }
+                    },
+                    error: function() {
+                        $msg.text('Network error. Please try again.').removeClass('text-emerald-500 text-on-surface-variant').addClass('text-red-500');
+                        $btn.prop('disabled', false);
+                    }
+                });
+            });
+        });
+    </script>
+}

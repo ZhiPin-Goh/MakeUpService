@@ -1,6 +1,194 @@
-﻿@{
+@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<style type="text/css">
+    .privacy-page-container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        max-width: 56rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    @@media (min-width: 768px) {
+        .privacy-page-container {
+            padding-left: 3rem;
+            padding-right: 3rem;
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+        }
+    }
+    
+    .privacy-header {
+        margin-bottom: 3rem;
+        text-align: left;
+    }
+    
+    .privacy-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-secondary);
+        font-family: var(--font-sans);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .privacy-title {
+        font-family: var(--font-display);
+        font-size: 2.25rem;
+        color: var(--color-primary);
+        margin-bottom: 1rem;
+    }
+    @@media (min-width: 768px) {
+        .privacy-title {
+            font-size: 3rem;
+        }
+    }
+    
+    .privacy-meta {
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        color: var(--color-on-surface-variant);
+    }
+    
+    .privacy-content-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+        color: var(--color-on-surface);
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        line-height: 1.625;
+    }
+    
+    .privacy-intro-box {
+        padding: 1.5rem;
+        background-color: var(--color-surface-container-lowest);
+        border: 1px solid rgba(212, 196, 183, 0.3);
+        border-radius: 1rem;
+        box-shadow: 0 4px 20px rgba(95, 94, 94, 0.04);
+    }
+    
+    .privacy-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .privacy-section-title {
+        font-family: var(--font-headline);
+        font-size: 1.25rem;
+        color: var(--color-primary);
+    }
+    
+    .privacy-text {
+        color: var(--color-on-surface-variant);
+        margin-bottom: 0.5rem;
+    }
+    
+    .privacy-list {
+        list-style-type: disc;
+        padding-left: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        color: var(--color-on-surface-variant);
+    }
+    
+    .privacy-contact-section {
+        padding-top: 2rem;
+        border-top: 1px solid rgba(212, 196, 183, 0.3);
+    }
+    
+    .privacy-contact-list {
+        list-style-type: none;
+        padding-left: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        color: var(--color-on-surface-variant);
+    }
+</style>
+
+<div class="privacy-page-container">
+    <!-- Page Header -->
+    <div class="privacy-header">
+        <span class="privacy-badge">
+            <i data-lucide="shield-check" style="width: 1rem; height: 1rem; color: var(--color-primary);"></i>
+            <span>Legal & Policies</span>
+        </span>
+        <h1 class="privacy-title">
+            <span>Privacy Policy</span>
+        </h1>
+        <p class="privacy-meta">
+            <strong><span>Effective Date:</span></strong> <span>31/07/2026</span>
+        </p>
+    </div>
+
+    <!-- Main Content Sections -->
+    <div class="privacy-content-container">
+        <div class="privacy-intro-box">
+            <p>
+                <span>Welcome to Shirley Makeup. We respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, and protect the information you provide when using our booking system.</span>
+            </p>
+        </div>
+
+        <section class="privacy-section">
+            <h2 class="privacy-section-title"><span>1. What Information We Collect</span></h2>
+            <p class="privacy-text"><span>When you make an appointment through our website, we only collect the necessary information to provide our services, which includes:</span></p>
+            <ul class="privacy-list">
+                <li><span>Your full name</span></li>
+                <li><span>Contact number (Phone/WhatsApp)</span></li>
+                <li><span>Email address</span></li>
+                <li><span>Appointment date and time</span></li>
+                <li><span>Location/Address (for mobile service and travel fee calculation)</span></li>
+            </ul>
+        </section>
+
+        <section class="privacy-section">
+            <h2 class="privacy-section-title"><span>2. How We Use Your Information</span></h2>
+            <p class="privacy-text"><span>We use the collected information solely for the following purposes:</span></p>
+            <ul class="privacy-list">
+                <li><span>To process and confirm your makeup appointment.</span></li>
+                <li><span>To calculate accurate travel fees based on your location.</span></li>
+                <li><span>To contact you regarding your booking (e.g., reminders, updates, or emergencies).</span></li>
+                <li><span>To maintain our internal client records for future bookings.</span></li>
+            </ul>
+        </section>
+
+        <section class="privacy-section">
+            <h2 class="privacy-section-title"><span>3. Data Sharing and Protection</span></h2>
+            <p class="privacy-text">
+                <span>Your privacy is our priority. We do not sell, rent, or share your personal information with any third parties or marketing agencies. Your data is stored securely in our system and is only accessible by our authorized admin and makeup artist.</span>
+            </p>
+        </section>
+        
+        <section class="privacy-section">
+            <h2 class="privacy-section-title"><span>4. Data Retention</span></h2>
+            <p class="privacy-text">
+                <span>We retain your booking details in our system to keep track of our business operations and to serve you better in future appointments.</span>
+            </p>
+        </section>
+        
+        <section class="privacy-section">
+            <h2 class="privacy-section-title"><span>5. Your Rights</span></h2>
+            <p class="privacy-text">
+                <span>If you wish to view, update, or request the deletion of your personal data from our system, please feel free to contact us at any time.</span>
+            </p>
+        </section>
+
+        <section class="privacy-contact-section">
+            <h2 class="privacy-section-title" style="margin-bottom: 1rem;"><span>Contact Us</span></h2>
+            <p class="privacy-text" style="margin-bottom: 1rem;"><span>If you have any questions about this Privacy Policy or your personal data, please contact us at:</span></p>
+            <ul class="privacy-contact-list">
+                <li><strong><span>Phone/WhatsApp:</span></strong> <span>+6011-51124118</span></li>
+            </ul>
+        </section>
+    </div>
+</div>

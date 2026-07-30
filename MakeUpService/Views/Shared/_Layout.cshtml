@@ -1,49 +1,683 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - MakeUpService</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - Shirley Beauty</title>
+    <!-- Tailwind v4 CDN -->
+    <script src="https://unpkg.com/@@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        @@theme {
+        --color-background: #fbf9f8;
+        --color-on-background: #1b1c1c;
+        --color-surface: #ffffff;
+        --color-surface-dim: #dbd9d9;
+        --color-surface-bright: #fbf9f8;
+        --color-surface-container-lowest: #ffffff;
+        --color-surface-container-low: #f5f3f3;
+        --color-surface-container: #efeded;
+        --color-surface-container-high: #eae8e7;
+        --color-surface-container-highest: #e4e2e2;
+        --color-on-surface: #1b1c1c;
+        --color-on-surface-variant: #50453b;
+        --color-inverse-surface: #303030;
+        --color-inverse-on-surface: #f2f0f0;
+        --color-outline: #82756a;
+        --color-outline-variant: #d4c4b7;
+        --color-primary: #7d562d;
+        --color-on-primary: #ffffff;
+        --color-primary-container: #d4a373;
+        --color-on-primary-container: #5b3912;
+        --color-inverse-primary: #f0bd8b;
+        --color-secondary: #645e4b;
+        --color-on-secondary: #ffffff;
+        --color-secondary-container: #ece2c9;
+        --color-on-secondary-container: #6b6450;
+        --color-tertiary: #6a5d43;
+        --color-on-tertiary: #ffffff;
+        --color-tertiary-container: #bbab8d;
+        --color-on-tertiary-container: #4b3f28;
+        --color-error: #ba1a1a;
+        --color-on-error: #ffffff;
+        --color-error-container: #ffdad6;
+        --color-on-error-container: #93000a;
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-display: "Playfair Display", ui-serif, Georgia, serif;
+        }
+    </style>
+    
+    <style>
+        body {
+            background-color: var(--color-background);
+            color: var(--color-on-background);
+        }
+
+        /* Basic Resets to fix browser default link colors */
+        a {
+            color: inherit !important;
+            text-decoration: inherit !important;
+        }
+
+        /* Global Color Utilities for Layout */
+        .text-primary { color: var(--color-primary) !important; }
+        .text-secondary { color: var(--color-secondary) !important; }
+        .text-on-background { color: var(--color-on-background) !important; }
+        .bg-primary-container { background-color: var(--color-primary-container) !important; }
+        .text-on-tertiary { color: var(--color-on-tertiary) !important; }
+        .text-on-surface-variant { color: var(--color-on-surface-variant) !important; }
+
+        ::selection {
+            background-color: var(--color-primary-container);
+            color: var(--color-on-primary-container);
+        }
+
+        .glass-nav {
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            background: rgba(251, 249, 248, 0.9);
+            border-bottom: 1px solid rgba(125, 86, 45, 0.15);
+        }
+        
+        .nav-link-hover {
+            position: relative;
+        }
+        .nav-link-hover::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--color-primary);
+            transition: width 0.3s ease;
+        }
+        .nav-link-hover:hover::after {
+            width: 100%;
+        }
+
+        /* Footer Styles */
+        .site-footer {
+            width: 100%;
+            margin-top: 6rem;
+            background-color: var(--color-surface-container-lowest);
+            border-top: 1px solid rgba(212, 196, 183, 0.2);
+            padding-top: 4rem;
+            padding-bottom: 3rem;
+        }
+        @@media (prefers-color-scheme: dark) {
+            .site-footer { background-color: var(--color-surface-container-high); }
+        }
+        .footer-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        @@media (min-width: 768px) {
+            .footer-container { padding: 0 3rem; }
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+        @@media (min-width: 768px) { .footer-grid { grid-template-columns: repeat(12, 1fr); } }
+        @@media (min-width: 1024px) { .footer-grid { gap: 3rem; } }
+        
+        .footer-col-brand {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        @@media (min-width: 768px) { .footer-col-brand { grid-column: span 5 / span 5; } }
+        .footer-brand-title {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            letter-spacing: -0.05em;
+            color: var(--color-primary);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            text-decoration: none;
+        }
+        .footer-brand-desc {
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            color: var(--color-on-surface-variant);
+            max-width: 24rem;
+            margin-bottom: 1.25rem;
+            line-height: 1.625;
+        }
+        @@media (min-width: 768px) { .footer-brand-desc { font-size: 1rem; } }
+        .footer-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: rgba(80, 69, 59, 0.8);
+            margin-bottom: 1.5rem;
+        }
+        .footer-socials {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .social-icon-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 9999px;
+            background-color: rgba(239, 237, 237, 0.6);
+            color: var(--color-on-surface-variant);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .social-icon-btn:hover { background-color: var(--color-primary-container); color: white; }
+        .social-icon-btn.whatsapp:hover { background-color: #059669; }
+
+        .footer-col-explore {}
+        @@media (min-width: 768px) { .footer-col-explore { grid-column: span 3 / span 3; } }
+        .footer-col-title {
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-primary);
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+        }
+        .footer-links-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            color: var(--color-on-surface-variant);
+        }
+        .footer-link { transition: color 0.3s; text-decoration: none; color: inherit; }
+        .footer-link:hover { color: var(--color-primary); }
+
+        .footer-col-booking {
+            background-color: rgba(239, 237, 237, 0.3);
+            border: 1px solid rgba(212, 196, 183, 0.15);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        @@media (min-width: 768px) { .footer-col-booking { grid-column: span 4 / span 4; } }
+        .studio-hours-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            color: var(--color-secondary);
+            font-family: var(--font-sans);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .studio-hours-title { font-family: var(--font-display); font-size: 1rem; color: var(--color-primary); margin-bottom: 0.5rem; }
+        .studio-hours-desc { font-family: var(--font-sans); font-size: 0.75rem; color: rgba(80, 69, 59, 0.8); margin-bottom: 1.25rem; line-height: 1.625; }
+        .btn-reserve {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            background-color: var(--color-primary-container);
+            color: white;
+            padding: 0.75rem 0;
+            border-radius: 0.75rem;
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            transition: all 0.3s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            text-decoration: none;
+        }
+        .btn-reserve:hover { background-color: var(--color-primary); color: white; }
+        
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(212, 196, 183, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: rgba(80, 69, 59, 0.7);
+            font-family: var(--font-sans);
+        }
+        @@media (min-width: 640px) { .footer-bottom { flex-direction: row; } }
+        .footer-bottom-links {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem 1.5rem;
+        }
+
+        .floating-chatbot {
+            position: fixed;
+            bottom: 5rem;
+            right: 4rem;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chatbot-btn {
+            background-color: var(--color-primary);
+            color: var(--color-on-primary);
+            border-radius: 9999px;
+            height: 3.5rem;
+            width: 3.5rem;
+            box-shadow: 0 10px 20px -5px rgba(212, 175, 55, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .chatbot-btn:hover { transform: scale(1.1); }
+        .chatbot-btn:active { transform: scale(0.9); }
+        .chatbot-tooltip {
+            position: absolute;
+            right: 100%;
+            margin-right: 1rem;
+            background-color: var(--color-surface);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            width: 12rem;
+            text-align: left;
+        }
+        .floating-chatbot:hover .chatbot-tooltip { opacity: 1; }
+        .chatbot-tooltip-title { font-family: var(--font-sans); font-size: 0.875rem; color: var(--color-primary); margin-bottom: 0.25rem; font-weight: 600; }
+        .chatbot-tooltip-desc { font-size: 0.75rem; color: var(--color-on-surface-variant); }
+
+
+        .float-card {
+            box-shadow: 0 4px 20px rgba(95, 94, 94, 0.04);
+        }
+
+        .shadow-20px-blur {
+            box-shadow: 0 10px 20px -5px rgba(212, 175, 55, 0.1), 0 8px 10px -6px rgba(212, 175, 55, 0.1);
+        }
+
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 24px;
+        }
+
+        @@media (min-width: 768px) {
+            .masonry-grid {
+                column-count: 2;
+            }
+        }
+
+        @@media (min-width: 1024px) {
+            .masonry-grid {
+                column-count: 3;
+            }
+        }
+
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 24px;
+        }
+
+        .slider-handle {
+            cursor: ew-resize;
+            z-index: 20;
+            background-color: #fff;
+            width: 2px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+        }
+
+        .slider-handle:after {
+            content: "< >";
+            color: #d4af37;
+            background-color: #fff;
+            border-radius: 50%;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .slider-overlay {
+            z-index: 10;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+        }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237d562d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08'/%3E%3Cpath d='M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="~/MakeUpService.styles.css" asp-append-version="true" />
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MakeUpService</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+<body class="bg-background text-on-background antialiased font-body-md overflow-x-hidden">
+    
+    @{
+        bool isChat = Context.Request.Path.StartsWithSegments("/chat", StringComparison.OrdinalIgnoreCase);
+        string layoutClasses = isChat ? "h-screen overflow-y-hidden" : "";
+        string mainClasses = isChat ? "flex flex-col h-full overflow-hidden" : "";
+    }
+
+    <div class="flex flex-col min-h-screen pt-24 @layoutClasses">
+        <header class="fixed top-0 w-full z-50 glass-nav transition-all duration-300" style="padding-top: 0.5rem; padding-bottom: 0.5rem;">
+            <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto" style="margin-inline: 50px">
+                <a href="/" class="font-display text-2xl tracking-[0.2em] uppercase hover:opacity-80 transition-all duration-300 font-bold text-decoration-none" style="color: var(--color-primary);">
+                    SHIRLEY
+                </a>
+                <nav class="hidden md:flex space-x-10 items-center font-sans text-xs uppercase tracking-widest font-semibold">
+                    <a href="/" class="nav-link-hover text-secondary hover:text-primary transition-colors duration-300 text-decoration-none">Home</a>
+                    <a href="/services/my-services" class="nav-link-hover text-secondary hover:text-primary transition-colors duration-300 text-decoration-none">Services</a>
+                    <a href="/about" class="nav-link-hover text-secondary hover:text-primary transition-colors duration-300 text-decoration-none">About</a>
+                    <a href="/faq" class="nav-link-hover text-secondary hover:text-primary transition-colors duration-300 text-decoration-none">FAQ</a>
+                    <a href="/feedback" class="nav-link-hover text-secondary hover:text-primary transition-colors duration-300 text-decoration-none">Feedback</a>
+                </nav>
+                <div class="hidden md:flex items-center space-x-6">
+                    <button class="lang-toggle-btn flex items-center space-x-1.5 text-secondary hover:text-primary transition-colors" title="Toggle Language">
+                        <i data-lucide="globe" class="w-4 h-4"></i>
+                        <span class="lang-text font-sans text-xs uppercase font-bold tracking-widest">EN</span>
+                    </button>
+                    <a href="/booking/my-bookings" style="border-radius:15px" class="flex items-center justify-center bg-primary text-white px-7 py-2.5 border border-primary font-sans text-xs uppercase tracking-[0.15em] hover:bg-transparent hover:text-primary transition-all duration-300 text-decoration-none">
+                        Book Now
+                    </a>
+                </div>
+                <div class="md:hidden flex items-center space-x-4">
+                    <button class="lang-toggle-btn flex items-center space-x-1 text-primary hover:opacity-80 transition-opacity">
+                        <i data-lucide="globe" class="w-4 h-4"></i>
+                        <span class="lang-text font-sans text-xs font-bold uppercase tracking-widest">EN</span>
+                    </button>
+                    <button id="mobile-menu-open" class="text-primary focus:outline-none p-1 hover:opacity-80">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+        </header>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="fixed inset-0 z-[60] bg-surface-bright/98 backdrop-blur-xl flex flex-col justify-center items-center opacity-0 pointer-events-none transition-all duration-300">
+            <button id="mobile-menu-close" class="absolute top-8 right-6 text-primary p-2 hover:opacity-70 transition-opacity">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
+            <nav class="flex flex-col items-center space-y-8 font-display text-2xl uppercase tracking-[0.15em] font-semibold">
+                <a href="/" class="mobile-nav-link text-primary hover:text-primary-container transition-colors text-decoration-none">Home</a>
+                <a href="/services/my-services" class="mobile-nav-link text-primary hover:text-primary-container transition-colors text-decoration-none">Services</a>
+                <a href="/about" class="mobile-nav-link text-primary hover:text-primary-container transition-colors text-decoration-none">About</a>
+                <a href="/faq" class="mobile-nav-link text-primary hover:text-primary-container transition-colors text-decoration-none">FAQ</a>
+                <a href="/feedback" class="mobile-nav-link text-primary hover:text-primary-container transition-colors text-decoration-none">Feedback</a>
+                
+                <a href="/booking/my-bookings" style="border-radius: 15px" class="mobile-nav-link mt-8 bg-primary text-white px-10 py-4 border border-primary font-sans text-sm uppercase tracking-widest hover:bg-transparent hover:text-primary transition-all duration-300 text-decoration-none">
+                    Book Now
+                </a>
+            </nav>
+        </div>
+
+        <main class="flex-grow w-full @mainClasses">
             @RenderBody()
         </main>
+
+        @if (!isChat)
+        {
+            <footer class="site-footer">
+                <div class="footer-container">
+                    <div class="footer-grid">
+                        <div class="footer-col-brand">
+                            <div>
+                                <a href="/" class="footer-brand-title">
+                                    SHIRLEY MAKE UP
+                                </a>
+                                <p class="footer-brand-desc">
+                                    Elevating natural beauty through refined, editorial-inspired artistry.
+                                </p>
+                                <div class="footer-location">
+                                    <i data-lucide="map-pin" style="width: 1rem; height: 1rem; color: var(--color-primary);"></i>
+                                    <span>Klang Valley, Malaysia & Destination Weddings Worldwide</span>
+                                </div>
+                            </div>
+                            <div class="footer-socials">
+                                <a href="https://www.instagram.com/shirley__makeup_artist?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="social-icon-btn">
+                                    <i data-lucide="instagram" class="fa-brands fa-instagram" style="width: 1rem; height: 1rem;"></i>
+                                </a>
+                                <a href="https://wa.me/601151124118" target="_blank" rel="noopener noreferrer" class="social-icon-btn whatsapp">
+                                    <i  class="fa-brands fa-whatsapp" style="width: 1rem; height: 1rem;"></i>
+                                </a>
+                                <a href="mailto:" class="social-icon-btn">
+                                    <i data-lucide="mail" class="fa-solid fa-envelope" style="width: 1rem; height: 1rem;"></i>
+                                </a>
+                                <a href="https://www.xiaohongshu.com/user/profile/5db044550000000001005b25?xhsshare=CopyLink&appuid=5db044550000000001005b25&apptime=1697537916&fbclid=IwY2xjawTWpDhleHRuA2FlbQIxMABicmlkETE4T3YyaUIweGhYZkJselp0c3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHpY0AinYXBI3tr-7ovOFzJP54Rg1Huhwu6y_6G4pC1UWAzXJ0eys4551Z6X4_aem__oMyTBmv__UJRmxBdBzyEQ" class="social-icon-btn" target="_blank">
+                                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="Xiaohongshu--Streamline-Simple-Icons" height="24" width="24">
+                                    <desc> Xiaohongshu Streamline Icon: https://streamlinehq.com </desc>
+                                    <title>Xiaohongshu</title> 
+                                    <path d="M22.405 9.879c0.002 0.016 0.01 0.02 0.07 0.019h0.725a0.797 0.797 0 0 0 0.78 -0.972 0.794 0.794 0 0 0 -0.884 -0.618 0.795 0.795 0 0 0 -0.692 0.794c0 0.101 -0.002 0.666 0.001 0.777zm-11.509 4.808c-0.203 0.001 -1.353 0.004 -1.685 0.003a2.528 2.528 0 0 1 -0.766 -0.126 0.025 0.025 0 0 0 -0.03 0.014L7.7 16.127a0.025 0.025 0 0 0 0.01 0.032c0.111 0.06 0.336 0.124 0.495 0.124 0.66 0.01 1.32 0.002 1.981 0 0.01 0 0.02 -0.006 0.023 -0.015l0.712 -1.545a0.025 0.025 0 0 0 -0.024 -0.036zM0.477 9.91c-0.071 0 -0.076 0.002 -0.076 0.01a0.834 0.834 0 0 0 -0.01 0.08c-0.027 0.397 -0.038 0.495 -0.234 3.06 -0.012 0.24 -0.034 0.389 -0.135 0.607 -0.026 0.057 -0.033 0.042 0.003 0.112 0.046 0.092 0.681 1.523 0.787 1.74 0.008 0.015 0.011 0.02 0.017 0.02 0.008 0 0.033 -0.026 0.047 -0.044 0.147 -0.187 0.268 -0.391 0.371 -0.606 0.306 -0.635 0.44 -1.325 0.486 -1.706 0.014 -0.11 0.021 -0.22 0.03 -0.33l0.204 -2.616 0.022 -0.293c0.003 -0.029 0 -0.033 -0.03 -0.034zm7.203 3.757a1.427 1.427 0 0 1 -0.135 -0.607c-0.004 -0.084 -0.031 -0.39 -0.235 -3.06a0.443 0.443 0 0 0 -0.01 -0.082c-0.004 -0.011 -0.052 -0.008 -0.076 -0.008h-1.48c-0.03 0.001 -0.034 0.005 -0.03 0.034l0.021 0.293c0.076 0.982 0.153 1.964 0.233 2.946 0.05 0.4 0.186 1.085 0.487 1.706 0.103 0.215 0.223 0.419 0.37 0.606 0.015 0.018 0.037 0.051 0.048 0.049 0.02 -0.003 0.742 -1.642 0.804 -1.765 0.036 -0.07 0.03 -0.055 0.003 -0.112zm3.861 -0.913h-0.872a0.126 0.126 0 0 1 -0.116 -0.178l1.178 -2.625a0.025 0.025 0 0 0 -0.023 -0.035l-1.318 -0.003a0.148 0.148 0 0 1 -0.135 -0.21l0.876 -1.954a0.025 0.025 0 0 0 -0.023 -0.035h-1.56c-0.01 0 -0.02 0.006 -0.024 0.015l-0.926 2.068c-0.085 0.169 -0.314 0.634 -0.399 0.938a0.534 0.534 0 0 0 -0.02 0.191 0.46 0.46 0 0 0 0.23 0.378 0.981 0.981 0 0 0 0.46 0.119h0.59c0.041 0 -0.688 1.482 -0.834 1.972a0.53 0.53 0 0 0 -0.023 0.172 0.465 0.465 0 0 0 0.23 0.398c0.15 0.092 0.342 0.12 0.475 0.12l1.66 -0.001c0.01 0 0.02 -0.006 0.023 -0.015l0.575 -1.28a0.025 0.025 0 0 0 -0.024 -0.035zm-6.93 -4.937H3.1a0.032 0.032 0 0 0 -0.034 0.033c0 1.048 -0.01 2.795 -0.01 6.829 0 0.288 -0.269 0.262 -0.28 0.262h-0.74c-0.04 0.001 -0.044 0.004 -0.04 0.047 0.001 0.037 0.465 1.064 0.555 1.263 0.01 0.02 0.03 0.033 0.051 0.033 0.157 0.003 0.767 0.009 0.938 -0.014 0.153 -0.02 0.3 -0.06 0.438 -0.132 0.3 -0.156 0.49 -0.419 0.595 -0.765 0.052 -0.172 0.075 -0.353 0.075 -0.533 0.002 -2.33 0 -4.66 -0.007 -6.991a0.032 0.032 0 0 0 -0.032 -0.032zm11.784 6.896c0 -0.014 -0.01 -0.021 -0.024 -0.022h-1.465c-0.048 -0.001 -0.049 -0.002 -0.05 -0.049v-4.66c0 -0.072 -0.005 -0.07 0.07 -0.07h0.863c0.08 0 0.075 0.004 0.075 -0.074V8.393c0 -0.082 0.006 -0.076 -0.08 -0.076h-3.5c-0.064 0 -0.075 -0.006 -0.075 0.073v1.445c0 0.083 -0.006 0.077 0.08 0.077h0.854c0.075 0 0.07 -0.004 0.07 0.07v4.624c0 0.095 0.008 0.084 -0.085 0.084 -0.37 0 -1.11 -0.002 -1.304 0 -0.048 0.001 -0.06 0.03 -0.06 0.03l-0.697 1.519s-0.014 0.025 -0.008 0.036c0.006 0.01 0.013 0.008 0.058 0.008 1.748 0.003 3.495 0.002 5.243 0.002 0.03 -0.001 0.034 -0.006 0.035 -0.033v-1.539zm4.177 -3.43c0 0.013 -0.007 0.023 -0.02 0.024 -0.346 0.006 -0.692 0.004 -1.037 0.004 -0.014 -0.002 -0.022 -0.01 -0.022 -0.024 -0.005 -0.434 -0.007 -0.869 -0.01 -1.303 0 -0.072 -0.006 -0.071 0.07 -0.07l0.733 -0.003c0.041 0 0.081 0.002 0.12 0.015 0.093 0.025 0.16 0.107 0.165 0.204 0.006 0.431 0.002 1.153 0.001 1.153zm2.67 0.244a1.953 1.953 0 0 0 -0.883 -0.222h-0.18c-0.04 -0.001 -0.04 -0.003 -0.042 -0.04V10.21c0 -0.132 -0.007 -0.263 -0.025 -0.394a1.823 1.823 0 0 0 -0.153 -0.53 1.533 1.533 0 0 0 -0.677 -0.71 2.167 2.167 0 0 0 -1 -0.258c-0.153 -0.003 -0.567 0 -0.72 0 -0.07 0 -0.068 0.004 -0.068 -0.065V7.76c0 -0.031 -0.01 -0.041 -0.046 -0.039H17.93s-0.016 0 -0.023 0.007c-0.006 0.006 -0.008 0.012 -0.008 0.023v0.546c-0.008 0.036 -0.057 0.015 -0.082 0.022h-0.95c-0.022 0.002 -0.028 0.008 -0.03 0.032v1.481c0 0.09 -0.004 0.082 0.082 0.082h0.913c0.082 0 0.072 0.128 0.072 0.128v1.148s0.003 0.117 -0.06 0.117h-1.482c-0.068 0 -0.06 0.082 -0.06 0.082v1.445s-0.01 0.068 0.064 0.068h1.457c0.082 0 0.076 -0.006 0.076 0.079v3.225c0 0.088 -0.007 0.081 0.082 0.081h1.43c0.09 0 0.082 0.007 0.082 -0.08v-3.27c0 -0.029 0.006 -0.035 0.033 -0.035l2.323 -0.003c0.098 0 0.191 0.02 0.28 0.061a0.46 0.46 0 0 1 0.274 0.407c0.008 0.395 0.003 0.79 0.003 1.185 0 0.259 -0.107 0.367 -0.33 0.367h-1.218c-0.023 0.002 -0.029 0.008 -0.028 0.033 0.184 0.437 0.374 0.871 0.57 1.303a0.045 0.045 0 0 0 0.04 0.026c0.17 0.005 0.34 0.002 0.51 0.003 0.15 -0.002 0.517 0.004 0.666 -0.01a2.03 2.03 0 0 0 0.408 -0.075c0.59 -0.18 0.975 -0.698 0.976 -1.313v-1.981c0 -0.128 -0.01 -0.254 -0.034 -0.38 0 0.078 -0.029 -0.641 -0.724 -0.998z" fill="#000000" stroke-width="1">
+                                    </path> </svg>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="footer-col-explore">
+                            <h4 class="footer-col-title">Explore</h4>
+                            <ul class="footer-links-list">
+                                <li><a href="/services/my-services" class="footer-link">Services & Packages</a></li>
+                                <li><a href="/about" class="footer-link">About Shirley</a></li>
+                                <li>
+                                    <a href="/chat" class="footer-link" style="display: flex; align-items: center; gap: 0.375rem;">
+                                        <span>AI Assistant</span>
+                                        <i data-lucide="sparkles" style="width: 0.875rem; height: 0.875rem; color: #f59e0b;"></i>
+                                    </a>
+                                </li>
+                                <li><a href="/faq" class="footer-link">FAQs & Help</a></li>
+                                <li><a href="/feedback" class="footer-link">Feedback</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="footer-col-booking">
+                            <div>
+                                <span class="studio-hours-badge">
+                                    <i data-lucide="clock" style="width: 0.875rem; height: 0.875rem;"></i>
+                                    <span>Studio Hours</span>
+                                </span>
+                                <h4 class="studio-hours-title">By Appointment Only</h4>
+                                <p class="studio-hours-desc">
+                                    Private bridal trials and event bookings available Monday to Sunday. Early morning call times accommodated upon request.
+                                </p>
+                            </div>
+                            <a href="/booking/my-bookings" class="btn-reserve">
+                                <i data-lucide="calendar" style="width: 0.875rem; height: 0.875rem;"></i>
+                                <span>Reserve Your Session</span>
+                                <i data-lucide="arrow-right" style="width: 0.875rem; height: 0.875rem;"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="footer-bottom">
+                        <p>© 2026 Shirley Make Up. All rights reserved.</p>
+                        <div class="footer-bottom-links">
+                            <a href="/faq" class="footer-link">FAQ</a>
+                            <a href="/terms-and-conditions" class="footer-link">Terms & Conditions</a>
+                            <a href="/privacy-policy" class="footer-link">Privacy Policy</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+
+            <div class="floating-chatbot group">
+                <a href="/chat" aria-label="Assistant" class="chatbot-btn">
+                    <i data-lucide="sparkles"></i>
+                </a>
+                <div class="chatbot-tooltip">
+                    <div class="chatbot-tooltip-title">Assistant</div>
+                    <div class="chatbot-tooltip-desc">Ask me anything about my services</div>
+                </div>
+            </div>
+        }
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - MakeUpService - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- AOS Animation -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+    </script>
+    
+    <!-- Lenis Smooth Scrolling (Momentum Scroll) -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script>
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+        })
+
+        function raf(time) {
+            lenis.raf(time)
+            requestAnimationFrame(raf)
+        }
+
+        requestAnimationFrame(raf)
+    </script>
+
+    <script>
+        lucide.createIcons();
+        
+        // Global object to store translations loaded from JSON (EN -> CN mapping)
+        var currentTranslations = {};
+
+        function applyTranslation(lang) {
+            if (lang === 'CN') {
+                $('*').contents().filter(function() {
+                    return this.nodeType === 3 && this.nodeValue.trim() !== '';
+                }).each(function() {
+                    var originalText = this.nodeValue.trim();
+                    if (currentTranslations[originalText]) {
+                        if (!$(this.parentElement).attr('data-original-text')) {
+                            $(this.parentElement).attr('data-original-text', originalText);
+                        }
+                        this.nodeValue = this.nodeValue.replace(originalText, currentTranslations[originalText]);
+                    }
+                });
+            } else {
+                // Revert to English (using original text data attribute)
+                $('[data-original-text]').each(function() {
+                    $(this).contents().filter(function() {
+                        return this.nodeType === 3 && this.nodeValue.trim() !== '';
+                    }).each(function() {
+                        var currentText = this.nodeValue.trim();
+                        // Find the reverse mapping (CN -> EN) using our loaded dictionary
+                        for (var key in currentTranslations) {
+                            if (currentTranslations[key] === currentText) {
+                                this.nodeValue = this.nodeValue.replace(currentText, key);
+                                break;
+                            }
+                        }
+                    });
+                });
+            }
+        }
+
+        async function loadAndApplyTranslation(lang) {
+            try {
+                // We only need the Chinese dictionary for both translating and reverting
+                if (Object.keys(currentTranslations).length === 0) {
+                    const response = await fetch('/locales/zh.json');
+                    if (response.ok) {
+                        currentTranslations = await response.json();
+                    } else {
+                        console.error('Failed to load translations', response.statusText);
+                        return;
+                    }
+                }
+                applyTranslation(lang);
+            } catch (error) {
+                console.error('Error loading translation file:', error);
+            }
+        }
+
+        $(document).ready(function() {
+            var currentLang = localStorage.getItem('site_lang') || 'EN';
+            $('.lang-text').text(currentLang);
+            
+            // Load and apply immediately on load if CN
+            if (currentLang === 'CN') {
+                loadAndApplyTranslation('CN');
+            }
+
+            $('.lang-toggle-btn').on('click', function(e) {
+                e.preventDefault();
+                var newLang = currentLang === 'EN' ? 'CN' : 'EN';
+                currentLang = newLang; // Update global state early
+                
+                $('.lang-text').text(currentLang);
+                localStorage.setItem('site_lang', currentLang);
+                
+                loadAndApplyTranslation(currentLang);
+            });
+
+            // Mobile Menu Toggle Logic
+            $('#mobile-menu-open').on('click', function() {
+                $('#mobile-menu').removeClass('opacity-0 pointer-events-none').addClass('opacity-100 pointer-events-auto');
+                $('body').css('overflow', 'hidden'); // Prevent background scrolling
+            });
+            
+            $('#mobile-menu-close, .mobile-nav-link').on('click', function() {
+                $('#mobile-menu').removeClass('opacity-100 pointer-events-auto').addClass('opacity-0 pointer-events-none');
+                $('body').css('overflow', ''); // Restore scrolling
+            });
+        });
+    </script>
+    
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+

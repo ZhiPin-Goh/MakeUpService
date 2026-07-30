@@ -1,0 +1,177 @@
+@{
+    ViewData["Title"] = "Chat with AI Beauty Assistant";
+}
+
+<style>
+    .chat-page-container {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        background-color: var(--color-surface-container-lowest);
+    }
+    
+    .chat-messages-area {
+        flex-grow: 1;
+        padding: 1rem 2rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        min-height: 0; /* Critical for inner scrolling */
+    }
+    
+    .chat-input-container {
+        padding: 1.5rem;
+        background-color: var(--color-surface);
+        border-top: 1px solid rgba(212, 196, 183, 0.4);
+        flex-shrink: 0;
+    }
+    
+    .chat-form-wrapper {
+        display: flex;
+        gap: 0.5rem;
+        max-width: 56rem;
+        margin: 0 auto;
+        width: 100%;
+        align-items: flex-end; /* Keeps button at the bottom as textarea grows */
+    }
+    
+    .chat-input-field {
+        flex-grow: 1;
+        background-color: var(--color-surface-container-lowest);
+        border: 1px solid rgba(212, 196, 183, 0.8);
+        border-radius: 1.5rem; /* Use specific radius instead of 9999px for multiline */
+        padding: 0.75rem 1.5rem;
+        font-family: var(--font-body);
+        font-size: 1rem;
+        transition: all 0.2s;
+        resize: none;
+        overflow-y: hidden;
+        min-height: 3rem;
+        max-height: 200px;
+        line-height: 1.5;
+    }
+    
+    .chat-input-field:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 1px var(--color-primary-container);
+    }
+    
+    .chat-submit-btn {
+        background-color: var(--color-primary-container);
+        color: var(--color-on-primary);
+        border-radius: 9999px;
+        width: 3rem;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.2s;
+        flex-shrink: 0;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .chat-submit-btn:hover:not(:disabled) {
+        opacity: 0.9;
+    }
+    
+    .chat-submit-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Chat Bubble Styles (used by chat.js) */
+    .msg-row {
+        display: flex;
+        width: 100%;
+    }
+    .msg-row.user {
+        justify-content: flex-end;
+    }
+    .msg-row.model {
+        justify-content: flex-start;
+    }
+    
+    .msg-bubble-container {
+        display: flex;
+        max-width: 80%;
+        align-items: flex-end;
+        gap: 0.75rem;
+    }
+    .msg-row.user .msg-bubble-container {
+        flex-direction: row-reverse;
+    }
+    .msg-row.model .msg-bubble-container {
+        flex-direction: row;
+    }
+    
+    .msg-avatar {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .msg-row.user .msg-avatar {
+        background-color: rgba(212, 196, 183, 0.3);
+        color: var(--color-on-surface);
+    }
+    .msg-row.model .msg-avatar {
+        background-color: var(--color-primary-container);
+        color: var(--color-on-primary);
+    }
+    
+    .msg-text-box {
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+    .msg-row.user .msg-text-box {
+        background-color: rgba(212, 196, 183, 0.3);
+        color: var(--color-on-surface);
+        border-bottom-right-radius: 0;
+    }
+    .msg-row.model .msg-text-box {
+        background-color: rgba(189, 154, 115, 0.15);
+        color: var(--color-on-background);
+        border-bottom-left-radius: 0;
+    }
+    .msg-text-box p {
+        margin: 0;
+        font-family: var(--font-body);
+        font-size: 1rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+</style>
+
+<div class="chat-page-container">
+    <!-- Chat messages container -->
+    <div id="chat-messages" class="chat-messages-area" data-lenis-prevent="true">
+        <!-- Messages will be injected here via JS -->
+    </div>
+
+    <!-- Chat input form -->
+    <div class="chat-input-container">
+        <form id="chat-form" class="chat-form-wrapper">
+            @* <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off" class="chat-input-field" /> *@
+            <textarea id="chat-input" placeholder="Type your message..." autocomplete="off" class="chat-input-field" rows="1"></textarea>
+            <button type="submit" id="chat-submit-btn" disabled class="chat-submit-btn" aria-label="Send message">
+                <i data-lucide="send" style="width: 1.25rem; height: 1.25rem; margin-left: 0.25rem;"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/chat.js" asp-append-version="true"></script>
+}

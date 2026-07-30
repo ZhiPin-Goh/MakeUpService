@@ -1,4 +1,4 @@
-﻿using MakeUpService.Service;
+using MakeUpService.Service;
 using MakeUpService.ViewModel.BookingVm;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
@@ -18,11 +18,19 @@ namespace MakeUpService.Controllers
             return View();
         }
         [HttpGet("booking/price")]
-        public async Task<IActionResult> GetBookingPrice([FromBody] CalculateBookingPriceVm model)
+        public async Task<IActionResult> GetBookingPrice([FromQuery] CalculateBookingPriceVm model)
         {
             var result = await _services.CalculateBookingPriceAsync(model);
             return Json(result);
         }
+        
+        [HttpGet("fee/searchlocation")]
+        public async Task<IActionResult> SearchLocation([FromQuery] string query, CancellationToken cancellationToken)
+         {
+            var result = await _services.GetLocationSuggestionsAsync(query, cancellationToken);
+            return Content(result, "application/json");
+        }
+
         [HttpPost("booking/submit")]
         public async Task<IActionResult> SubmitBooking([FromBody] CreateBookingVm model, [FromHeader(Name = "X-Idempotency-Key")] string idempotencyKey)
         {
