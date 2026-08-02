@@ -87,5 +87,19 @@ namespace MakeUpServiceAdmin.Service
                 return (false, errorMessage?.Message ?? "Failed to update booking status.");
             }
         }
+        public async Task<(bool IsSuccess, string Message)> UpdateTravelFeeAsync(UpdateTravelFeeVm model)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/admin/bookings/update-travel-fee", model);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<ApiResponse>();
+                return (true, result?.Message ?? "Travel fee updated successfully.");
+            }
+            else
+            {
+                var errorMessage = await response.Content.ReadFromJsonAsync<ApiResponse>();
+                return (false, errorMessage?.Message ?? "Failed to update travel fee.");
+            }
+        }
     }
 }

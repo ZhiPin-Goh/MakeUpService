@@ -1,0 +1,35 @@
+﻿Ask:How to confirm that an appointment has been made
+- (收到email确认) You will receive an email confirmation once your appointment has been successfully booked. Please check your inbox (and spam/junk folder) for the confirmation email.
+
+Ask: What should I do if I don't receive a confirmation email?
+- (检查垃圾邮件) First, check your spam or junk email folder to ensure the confirmation email was not filtered there.
+
+Ask: How can I reschedule or cancel my appointment?
+- (联系客户服务) If you need to reschedule or cancel your appointment, please contact our customer service team as soon as possible. You can reach them via phone or email, and they will assist you with the process.
+
+Ask: （皮肤敏感) What should I do if I have sensitive skin and am concerned about the products used during my appointment?
+- (咨询专业人员) If you have sensitive skin, it is important to inform our staff prior to your appointment. They can provide information about the products used and recommend suitable alternatives to ensure your comfort and safety during the service.
+
+Ask: (可协商travel fee) 
+- (联系whatsapp) If you are concerned about travel fees, please contact us via WhatsApp to discuss and negotiate any potential travel costs associated with your appointment.
+
+Ask: (更改时间/地址) What should I do if I need to change the time or location of my appointment?
+- (联系客户服务) If you need to change the time or location of your appointment, please contact our customer service team as soon as possible. They will assist you in making the necessary adjustments to your booking.
+
+Ask: (2100-0259为什么不可预约) Why is the time slot 2100-0259 unavailable for booking?
+-  (休息时间) The time slot from 21:00 to 02:59 is unavailable for booking because it falls outside of our operating hours. Please select a different time within our available service hours for your appointment.
+
+Ask: (预约后多久可以收到确认) How long will it take to receive a confirmation after booking an appointment?
+- (立即发送) You should receive a confirmation email immediately after booking your appointment. If you do not receive it within a few minutes, please check your spam/junk folder or contact our customer service team for assistance. (booking is pending first, confirmation admin will whatsapp you to confirm the booking)
+
+Ask: (车费的价格要给2次来回吗) Do I need to pay for the travel fee for two round trips?
+- (1次来回) You only need to pay for one round trip travel fee. The fee covers the cost of traveling to and from your appointment location.
+
+Ask: （化妆时间临时加人） What should I do if I need to add an additional person to my makeup appointment at the last minute?
+- (时间允许) If you need to add an additional person to your makeup appointment at the last minute, please contact our customer service team immediately. They will check if there is enough time and resources available to accommodate the additional person and assist you with any necessary adjustments to your booking.
+
+Ask: (化妆品准备) What should I do to prepare my makeup products for the appointment?
+- (将提供) We will provide all the necessary makeup products for your appointment. You do not need to bring your own products unless you have specific items you would like us to use.
+
+Ask: (总额会在加其他的费用吗) Will the total amount change if additional fees are added?
+- (可能会) The total amount may change if additional fees are added, such as travel fees, extra services, or last-minute changes to your appointment. Please confirm any additional costs with our customer service team before finalizing your booking.

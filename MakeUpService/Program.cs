@@ -28,6 +28,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseStatusCodePagesWithReExecute("/404");
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

@@ -33,7 +33,7 @@ namespace MakeUpServiceAdmin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBookingDetails(int bookingID)
         {
-            if(bookingID <= 0)
+            if (bookingID <= 0)
             {
                 return Json(new { success = false, message = "Invalid booking ID." });
             }
@@ -67,7 +67,7 @@ namespace MakeUpServiceAdmin.Controllers
             }
             string phonePattern = @"^01[0-9]\d{7,8}$";
             string emailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-            if(!Regex.IsMatch(model.PhoneNumber, phonePattern))
+            if (!Regex.IsMatch(model.PhoneNumber, phonePattern))
             {
                 return Json(new
                 {
@@ -75,7 +75,7 @@ namespace MakeUpServiceAdmin.Controllers
                     message = "Invalid phone number format"
                 });
             }
-            if(!Regex.IsMatch(model.Email, emailPattern))
+            if (!Regex.IsMatch(model.Email, emailPattern))
             {
                 return Json(new
                 {
@@ -83,7 +83,7 @@ namespace MakeUpServiceAdmin.Controllers
                     message = "Invalid email format"
                 });
             }
-            if(model.Pax < 1 || model.Pax > 5)
+            if (model.Pax < 1 || model.Pax > 5)
             {
                 return Json(new
                 {
@@ -122,7 +122,7 @@ namespace MakeUpServiceAdmin.Controllers
         [HttpPost("bookings/toggle-status")]
         public async Task<IActionResult> ToggleBooking([FromBody] ToggleBookingVm model)
         {
-            if(model.BookingID <= 0)
+            if (model.BookingID <= 0)
             {
                 return Json(new
                 {
@@ -148,5 +148,44 @@ namespace MakeUpServiceAdmin.Controllers
                 });
             }
         }
-     }
+        [HttpPost("bookings/update-travel-fee")]
+        public async Task<IActionResult> UpdateTravelFee([FromBody] UpdateTravelFeeVm model)
+        {
+            if (model.BookingID <= 0)
+            {
+                return Json(new
+                {
+                    success = false,
+                    error = "Invalid booking ID"
+                });
+            }
+            if (model.NewTravelFee < 0)
+            {
+                return Json(new
+                {
+                    success = false,
+                    error = "Travel fee cannot be negative"
+                });
+            }
+
+            var result = await _services.UpdateTravelFeeAsync(model);
+            if (result.IsSuccess)
+            {
+                return Json(new
+                {
+                    success = true,
+                    message = result.Message
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = result.Message
+                });
+
+            }
+        }
+    }
 }

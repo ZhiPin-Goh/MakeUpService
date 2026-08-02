@@ -12,7 +12,7 @@ namespace MakeUpService.Controllers
         {
             _services = services;
         }
-        [Route("booking/my-bookings")]
+        [Route("/booking")]
         public IActionResult Booking()
         {
             return View();

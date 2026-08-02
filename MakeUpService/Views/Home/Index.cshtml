@@ -173,10 +173,10 @@
     .portfolio-subtitle { font-family: var(--font-sans); font-size: 1.125rem; color: var(--color-on-surface-variant); max-width: 600px; margin: 0 auto; line-height: 1.6; }
     .portfolio-stage { position: relative; width: 100%; max-width: 700px; aspect-ratio: 3/4; }
     @@media (min-width: 768px) { .portfolio-stage { max-width: 500px; } }
-    .portfolio-card { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 1.5rem; overflow: hidden; background-color: var(--color-surface); border: 1px solid rgba(212, 196, 183, 0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.15); opacity: 0; transform: scale(0.85) translateY(60px); transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1), transform 0.6s cubic-bezier(0.4,0,0.2,1); will-change: opacity, transform; }
+    .portfolio-card { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 1.5rem; overflow: hidden; background-color: #111; border: 1px solid rgba(212, 196, 183, 0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.15); opacity: 0; transform: scale(0.85) translateY(60px); transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1), transform 0.6s cubic-bezier(0.4,0,0.2,1); will-change: opacity, transform; }
     .portfolio-card.active { opacity: 1; transform: scale(1) translateY(0); z-index: 3; }
     .portfolio-card.prev { opacity: 0.4; transform: scale(0.9) translateY(-30px); z-index: 2; }
-    .portfolio-card-img { width: 100%; height: 100%; object-fit: cover; }
+    .portfolio-card-img { width: 100%; height: 100%; object-fit: contain; }
     .portfolio-card-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 2.5rem 1.5rem 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; }
     .portfolio-card-label { font-family: var(--font-sans); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.8); margin-bottom: 0.25rem; }
     .portfolio-card-title { font-family: var(--font-display); font-size: 1.5rem; color: #fff; font-weight: 400; margin: 0; }
@@ -250,10 +250,10 @@
                     <span>About the Artist</span>
                 </div>
                 <h2 class="section-title">
-                    Behind the Brush
+                    <span>Behind the Brush</span>
                 </h2>
                 <p class="about-desc">
-                    Based in the heart of Klang Valley, Malaysia, Shirley specializes in high-end bridal and editorial makeup. With a passion for precision and a calming presence, every session is designed to make you feel as exquisite as you look.
+                    <span>Based in the heart of Klang Valley, Malaysia, Shirley specializes in high-end bridal and editorial makeup. With a passion for precision and a calming presence, every session is designed to make you feel as exquisite as you look.</span>
                 </p>
 
                 <!-- Feature Pillars -->
@@ -263,8 +263,8 @@
                             <i data-lucide="heart-handshake" class="feature-icon"></i>
                         </div>
                         <div>
-                            <h3 class="feature-title">500+ Happy Brides</h3>
-                            <p class="feature-desc">Tailored bridal consultations & trials.</p>
+                            <h3 class="feature-title"><span>500+ Happy Brides</span></h3>
+                            <p class="feature-desc"><span>Tailored bridal consultations & trials.</span></p>
                         </div>
                     </div>
 
@@ -273,8 +273,8 @@
                             <i data-lucide="shield-check" class="feature-icon"></i>
                         </div>
                         <div>
-                            <h3 class="feature-title">Luxury Products</h3>
-                            <p class="feature-desc">100% premium, skin-safe cosmetics.</p>
+                            <h3 class="feature-title"><span>Luxury Products</span></h3>
+                            <p class="feature-desc"><span>100% premium, skin-safe cosmetics.</span></p>
                         </div>
                     </div>
 
@@ -283,8 +283,8 @@
                             <i data-lucide="sparkles" class="feature-icon"></i>
                         </div>
                         <div>
-                            <h3 class="feature-title">Skin-First Glow</h3>
-                            <p class="feature-desc">Luminous, lightweight, tear-proof finishes.</p>
+                            <h3 class="feature-title"><span>Skin-First Glow</span></h3>
+                            <p class="feature-desc"><span>Luminous, lightweight, tear-proof finishes.</span></p>
                         </div>
                     </div>
 
@@ -293,8 +293,8 @@
                             <i data-lucide="map-pin" class="feature-icon"></i>
                         </div>
                         <div>
-                            <h3 class="feature-title">Mobile & Travel Service</h3>
-                            <p class="feature-desc">Klang Valley & destination events.</p>
+                            <h3 class="feature-title"><span>Mobile & Travel Service</span></h3>
+                            <p class="feature-desc"><span>Klang Valley & destination events.</span></p>
                         </div>
                     </div>
                 </div>
@@ -514,7 +514,7 @@
                                         Experience premium artistry tailored to your unique beauty needs with our @service.Name package.
                                     </p>
                                     <div class="flex items-center gap-4 mt-auto">
-                                        <a href="/booking/my-bookings" class="service-btn-book">
+                                        <a href="/booking" class="service-btn-book">
                                             <span>Book Now</span>
                                         </a>
                                         <a href="/services/@hashId" class="service-btn-details">
@@ -579,7 +579,7 @@
             </div>
 
             <div class="cta-actions">
-                <a href="/booking/my-bookings" class="btn-cta-primary">
+                <a href="/booking" class="btn-cta-primary">
                     <i data-lucide="calendar" class="w-4 h-4"></i>
                     <span>Book Now</span>
                     <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>

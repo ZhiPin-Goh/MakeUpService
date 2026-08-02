@@ -1,0 +1,27 @@
+@{
+    ViewData["Title"] = "404 Not Found";
+}
+
+<div class="min-h-[70vh] flex items-center justify-center px-margin-mobile md:px-margin-desktop py-12 md:py-20">
+    <div class="text-center max-w-2xl mx-auto">
+        <div class="w-20 h-20 rounded-3xl bg-error-container/10 text-error flex items-center justify-center mx-auto mb-6">
+            <i data-lucide="alert-circle" class="w-10 h-10"></i>
+        </div>
+        <h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-primary mb-4">
+            <span>404 - Page Not Found</span>
+        </h1>
+        <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed mb-8">
+            <span>Oops! The page you're looking for doesn't exist, has been moved, or is temporarily unavailable.</span>
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="/" class="w-full sm:w-auto bg-primary-container text-white px-8 py-3.5 rounded-full font-label-md text-sm flex items-center justify-center gap-2 shadow-sm hover:bg-primary-fixed hover:text-on-primary-fixed transition-all text-decoration-none">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                <span>Back to Home</span>
+            </a>
+            <a href="/faq" class="w-full sm:w-auto bg-surface-container-high text-on-surface hover:bg-surface-container-highest px-8 py-3.5 rounded-full font-label-md text-sm flex items-center justify-center gap-2 transition-all border border-outline-variant/20 text-decoration-none">
+                <i data-lucide="help-circle" class="w-4 h-4"></i>
+                <span>Visit Help Center</span>
+            </a>
+        </div>
+    </div>
+</div>
