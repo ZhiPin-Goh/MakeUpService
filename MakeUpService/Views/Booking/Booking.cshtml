@@ -133,7 +133,7 @@
     }
     @@media (min-width: 768px) {
         .form-grid { grid-template-columns: repeat(2, 1fr); }
-        .col-span-2 { grid-column: span 2 / span 2; }
+        .booking-col-span-2 { grid-column: span 2 / span 2; }
     }
     
     .form-input-wrapper {
@@ -492,7 +492,7 @@
                             <i data-lucide="mail" class="form-input-icon"></i>
                             <input class="form-input" placeholder="Email Address" type="email" id="Email" name="Email" required />
                         </div>
-                        <div class="form-input-wrapper col-span-2">
+                        <div class="form-input-wrapper booking-col-span-2">
                             <i data-lucide="phone" class="form-input-icon"></i>
                             <input class="form-input" placeholder="Phone Number / WhatsApp (e.g. 0123456789)" type="tel" id="PhoneNumber" name="PhoneNumber" required />
                         </div>
@@ -506,7 +506,7 @@
                         <span>Step 2: Service & Number of Pax</span>
                     </label>
                     <div class="form-grid">
-                        <div class="form-input-wrapper col-span-2">
+                        <div class="form-input-wrapper booking-col-span-2">
                             <select id="ServiceID" name="ServiceID" class="form-input form-select js-calc-trigger" required>
                                 <option value="" disabled selected>Select a Service...</option>
                                 <!-- Loaded via JS -->
@@ -514,7 +514,7 @@
                             <i data-lucide="chevron-down" class="form-select-icon"></i>
                         </div>
 
-                        <div class="form-input-wrapper col-span-2 pax-control">
+                        <div class="form-input-wrapper booking-col-span-2 pax-control">
                             <div class="pax-label">
                                 <i data-lucide="users" style="width: 1rem; height: 1rem; color: var(--color-primary);"></i>
                                 <span>Number of Guests / Clients:</span>
@@ -541,7 +541,7 @@
                         <div class="form-input-wrapper">
                             <input class="form-input form-select" type="time" min="03:00" max="21:00" id="AppointmentTime" name="AppointmentTime" required />
                         </div>
-                        <div class="col-span-2" style="font-size: 0.75rem; color: rgba(80, 69, 59, 0.7); display: flex; align-items: center; gap: 0.25rem; margin-top: -0.25rem;">
+                        <div class="booking-col-span-2" style="font-size: 0.75rem; color: rgba(80, 69, 59, 0.7); display: flex; align-items: center; gap: 0.25rem; margin-top: -0.25rem;">
                             <i data-lucide="info" style="width: 0.875rem; height: 0.875rem;"></i>
                             <span>Note: Appointments are not available between 21:00 and 02:59.</span>
                         </div>
@@ -555,7 +555,7 @@
                         <span>Step 4: Area & Location Address</span>
                     </label>
                     <div class="form-grid">
-                        <div class="form-input-wrapper col-span-2">
+                        <div class="form-input-wrapper booking-col-span-2">
                             <select id="AreaID" name="AreaID" class="form-input form-select js-calc-trigger">
                                 <option value="" selected>Select an Area (Optional)</option>
                                 <!-- Loaded via JS -->

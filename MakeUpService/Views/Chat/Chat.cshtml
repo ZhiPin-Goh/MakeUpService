@@ -15,20 +15,32 @@
     
     .chat-messages-area {
         flex-grow: 1;
-        padding: 1rem 2rem;
+        padding: 1rem;
         overflow-y: auto;
         overflow-x: hidden;
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1rem;
         min-height: 0; /* Critical for inner scrolling */
+    }
+    @@media (min-width: 768px) {
+        .chat-messages-area {
+            padding: 1rem 2rem;
+            gap: 1.5rem;
+        }
     }
     
     .chat-input-container {
-        padding: 1.5rem;
+        padding: 1rem;
         background-color: var(--color-surface);
         border-top: 1px solid rgba(212, 196, 183, 0.4);
         flex-shrink: 0;
+        padding-bottom: env(safe-area-inset-bottom, 1rem);
+    }
+    @@media (min-width: 768px) {
+        .chat-input-container {
+            padding: 1.5rem;
+        }
     }
     
     .chat-form-wrapper {
@@ -100,9 +112,15 @@
     
     .msg-bubble-container {
         display: flex;
-        max-width: 80%;
+        max-width: 90%;
         align-items: flex-end;
-        gap: 0.75rem;
+        gap: 0.5rem;
+    }
+    @@media (min-width: 768px) {
+        .msg-bubble-container {
+            max-width: 80%;
+            gap: 0.75rem;
+        }
     }
     .msg-row.user .msg-bubble-container {
         flex-direction: row-reverse;
@@ -130,8 +148,13 @@
     }
     
     .msg-text-box {
-        padding: 1rem;
+        padding: 0.75rem 1rem;
         border-radius: 1rem;
+    }
+    @@media (min-width: 768px) {
+        .msg-text-box {
+            padding: 1rem;
+        }
     }
     .msg-row.user .msg-text-box {
         background-color: rgba(212, 196, 183, 0.3);
@@ -146,11 +169,17 @@
     .msg-text-box p {
         margin: 0;
         font-family: var(--font-body);
-        font-size: 1rem;
+        font-size: 0.9375rem;
+        line-height: 1.5;
         white-space: pre-wrap;
         word-wrap: break-word;
         word-break: break-word;
         overflow-wrap: break-word;
+    }
+    @@media (min-width: 768px) {
+        .msg-text-box p {
+            font-size: 1rem;
+        }
     }
 </style>
 

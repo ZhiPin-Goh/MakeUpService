@@ -267,12 +267,18 @@
 
         .floating-chatbot {
             position: fixed;
-            bottom: 5rem;
-            right: 4rem;
+            bottom: 1.5rem;
+            right: 1.5rem;
             z-index: 50;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        @@media (min-width: 768px) {
+            .floating-chatbot {
+                bottom: 5rem;
+                right: 4rem;
+            }
         }
         .chatbot-btn {
             background-color: var(--color-primary);
@@ -393,11 +399,11 @@
     
     @{
         bool isChat = Context.Request.Path.StartsWithSegments("/chat", StringComparison.OrdinalIgnoreCase);
-        string layoutClasses = isChat ? "h-screen overflow-y-hidden" : "";
+        string layoutClasses = isChat ? "h-dvh overflow-y-hidden" : "min-h-screen";
         string mainClasses = isChat ? "flex flex-col h-full overflow-hidden" : "";
     }
 
-    <div class="flex flex-col min-h-screen pt-24 @layoutClasses">
+    <div class="flex flex-col pt-24 @layoutClasses">
         <header class="fixed top-0 w-full z-50 glass-nav transition-all duration-300" style="padding-top: 0.5rem; padding-bottom: 0.5rem;">
             <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto" style="margin-inline: 50px">
                 <a href="/" class="font-display text-2xl tracking-[0.2em] uppercase hover:opacity-80 transition-all duration-300 font-bold text-decoration-none" style="color: var(--color-primary);">
