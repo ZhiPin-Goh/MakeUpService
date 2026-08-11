@@ -24,7 +24,6 @@ namespace MakeUpServiceAdmin.Controllers
         [HttpPost("scheduleblocker/create")]
         public async Task<IActionResult> CreateScheduleBlocker([FromBody] CreateVm model)
         {
-            model.IsFullDay = true;
             var result = await _scheduleBlockerService.CreateScheduleBlockerAsync(model);
             if(result.IsSuccess)
             {

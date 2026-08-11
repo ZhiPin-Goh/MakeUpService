@@ -249,7 +249,6 @@
                     <th class="table-th" style="padding-left: 1.5rem;">ID</th>
                     <th class="table-th">Reason / Title</th>
                     <th class="table-th">Blocked Date(s)</th>
-                    <th class="table-th" style="text-align: center;">Status</th>
                     <th class="table-th" style="text-align: right; padding-right: 1.5rem;">Actions</th>
                 </tr>
             </thead>
@@ -264,13 +263,7 @@
                             <td class="table-td">
                                 <div class="date-info">
                                     <span class="date-main">@blocker.StartDate.ToString("MMM dd, yyyy tt:hh")</span>
-                                    <span class="date-sub">
-                                        <i data-lucide="clock" style="width: 0.75rem; height: 0.75rem;"></i> @blocker.EndDate.ToString("MMM dd, yyyy tt:hh")
-                                    </span>
                                 </div>
-                            </td>
-                            <td class="table-td" style="text-align: center;">
-                                @(blocker.IsFullDay ? "Full Day" : "Partial")
                             </td>
                             <td class="table-td" style="padding-right: 1.5rem;">
                                 <div class="action-btn-group">
@@ -313,14 +306,10 @@
                 <label class="form-label">Reason / Title</label>
                 <input type="text" id="Reason" class="input-glow w-full" placeholder="e.g. Public Holiday" required>
             </div>
-            <div class="form-row">
+            <div class="form-row" style="grid-template-columns: 1fr;">
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label class="form-label">Start Date</label>
+                    <label class="form-label">Date</label>
                     <input type="date" id="StartDate" min="@DateTime.Today.ToString("yyyy-MM-dd")" class="input-glow w-full" required>
-                </div>
-                <div class="form-group" style="margin-bottom: 0;">
-                    <label class="form-label">End Date</label>
-                    <input type="date" id="EndDate" min="@DateTime.Today.ToString("yyyy-MM-dd")" class="input-glow w-full" required>
                 </div>
             </div>
             <div class="modal-footer" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-surface-container-highest);">
@@ -338,8 +327,7 @@
                 e.preventDefault();
                 var payload = {
                     Reason: $('#Reason').val(),
-                    StartDate: $('#StartDate').val(),
-                    EndDate: $('#EndDate').val()
+                    StartDate: $('#StartDate').val()
                 };
                 
                 var $btn = $('#btn-save-blocker');
