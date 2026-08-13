@@ -676,6 +676,23 @@
                 $('#mobile-menu').removeClass('opacity-100 pointer-events-auto').addClass('opacity-0 pointer-events-none');
                 $('body').css('overflow', ''); // Restore scrolling
             });
+            
+            // Smooth scroll to top when clicking home links if already on home page
+            $('a[href="/"]').on('click', function(e) {
+                if (window.location.pathname === '/') {
+                    e.preventDefault();
+                    
+                    // Close mobile menu if open
+                    $('#mobile-menu').removeClass('opacity-100 pointer-events-auto').addClass('opacity-0 pointer-events-none');
+                    $('body').css('overflow', '');
+                    
+                    if (typeof lenis !== 'undefined') {
+                        lenis.scrollTo(0, { duration: 1.2 });
+                    } else {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                }
+            });
         });
     </script>
     
