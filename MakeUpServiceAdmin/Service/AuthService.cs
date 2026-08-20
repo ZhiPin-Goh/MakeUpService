@@ -57,7 +57,7 @@ namespace MakeUpServiceAdmin.Service
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
 
-            var response = await _httpClient.PostAsJsonAsync($"{BaseUrl}api/admin/auth/logout", model);
+            var response = await _httpClient.PostAsJsonAsync($"{BaseUrl}api/admin/auth/revoke-token", model);
             if (response.IsSuccessStatusCode)
             {
                 return true;

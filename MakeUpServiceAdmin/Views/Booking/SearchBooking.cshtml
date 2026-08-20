@@ -863,6 +863,7 @@
                             area:            data.area            ?? data.Area            ?? 'N/A',
                             address:         data.address         ?? data.Address         ?? 'N/A',
                             service:         data.service         ?? data.Service         ?? '',
+                            servicePrice:    data.servicePrice    ?? data.ServicePrice    ?? 0,
                             travelFee:       data.travelFee       ?? data.TravelFee       ?? 0,
                             totalPrice:      data.totalPrice      ?? data.TotalPrice      ?? 0,
                             status:          data.status          ?? data.Status          ?? ''
@@ -906,6 +907,7 @@
                         
                         // Pricing
                         html += '<div class="details-pricing">';
+                        html += '  <div class="details-travel-fee"><span class="details-travel-fee-label">Service Price:</span> <span class="details-travel-fee-value">RM ' + parseFloat(d.servicePrice).toFixed(2) + '</span></div>';
                         html += '  <div class="details-travel-fee"><span class="details-travel-fee-label">Travel Fee:</span> <span class="details-travel-fee-value">RM ' + parseFloat(d.travelFee).toFixed(2) + '</span></div>';
                         html += '  <div class="details-total-price">RM ' + parseFloat(d.totalPrice).toFixed(2) + '</div>';
                         html += '</div>';

@@ -14,5 +14,6 @@
         public decimal TravelFee { get; set; }
         public decimal TotalPrice { get; set; }
         public string Status { get; set; }
+        public decimal ServicePrice { get; set; }
     }
 }

@@ -57,6 +57,11 @@
     .scroll-indicator-btn { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 20; color: rgba(255,255,255,0.8); display: flex; flex-direction: column; align-items: center; gap: 0.25rem; cursor: pointer; transition: color 0.3s; animation: bounce 1s infinite; border: none; background: transparent; }
     .scroll-indicator-btn:hover { color: white; }
     .scroll-indicator-text { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; font-family: var(--font-sans); font-weight: 500; color: rgba(255,255,255,0.7); }
+    
+    .banner-title-container { position: absolute; bottom: 4.5rem; left: 1.5rem; z-index: 10; pointer-events: none; max-width: 90%; }
+    @@media (min-width: 768px) { .banner-title-container { bottom: 6rem; left: 4rem; max-width: 70%; } }
+    .banner-title { color: white; font-family: var(--font-display); font-size: 2.5rem; font-weight: 600; letter-spacing: 0.05em; text-shadow: 0 4px 12px rgba(0,0,0,0.6); margin: 0; line-height: 1.2; text-align: left; }
+    @@media (min-width: 768px) { .banner-title { font-size: 4rem; } }
 
     /* About Artist Section */
     .about-section { padding: 5rem 1rem; max-width: 1440px; margin: 0 auto; }
@@ -215,8 +220,25 @@
                 for (int i = 0; i < sortedBanners.Count; i++)
                 {
                     var banner = sortedBanners[i];
-                    <div class="swiper-slide">
+                    <div class="swiper-slide relative">
+                        <!-- Image -->
                         <img src="@banner.ImageUrl" alt="@banner.Title" class="w-full h-full object-cover object-top" />
+                        
+                        <!-- Title Overlay -->
+                        @if (!string.IsNullOrEmpty(banner.Title))
+                        {
+                            <div class="banner-title-container">
+                                <h2 class="banner-title">
+                                    @banner.Title
+                                </h2>
+                            </div>
+                        }
+
+                        <!-- Clickable Link Overlay -->
+                        @if (!string.IsNullOrEmpty(banner.TargetUrl))
+                        {
+                            <a href="@banner.TargetUrl" class="absolute inset-0 z-20" aria-label="@banner.Title"></a>
+                        }
                     </div>
                 }
             }
