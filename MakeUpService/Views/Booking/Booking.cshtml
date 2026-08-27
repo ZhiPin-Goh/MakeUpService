@@ -614,6 +614,7 @@
                         <div class="summary-label-col">
                             <span id="label-service-name" class="summary-label">Service Name</span>
                             <span id="label-service-base" class="summary-sublabel">Base Price: RM 0.00</span>
+                            <span id="label-service-duration" class="summary-sublabel" style="margin-top: 0.125rem;">Est. Duration: 0 mins</span>
                         </div>
                         <span id="price-service-total" class="summary-price">RM 0.00</span>
                     </div>
@@ -757,7 +758,11 @@
                         $('#label-service-name').text(res.serviceName);
                         let basePriceLabel = currentLang === 'CN' ? '基础价格：' : 'Base Price: ';
                         let perPaxLabel = currentLang === 'CN' ? ' / 人' : ' / pax';
-                        $('#label-service-base').text(basePriceLabel + 'RM ' + res.serviceBasePrice.toFixed(2) + perPaxLabel);
+                        let paxCountLabel = currentLang === 'CN' ? ' | 人数: ' : ' | Pax: ';
+                        $('#label-service-base').text(basePriceLabel + 'RM ' + res.serviceBasePrice.toFixed(2) + perPaxLabel + paxCountLabel + res.pax);
+                        
+                        let durationLabel = currentLang === 'CN' ? '预计服务时长：' : 'Est. Duration: ';
+                        $('#label-service-duration').text(durationLabel + res.totalBookingDuration + (currentLang === 'CN' ? ' 分钟' : ' mins'));
                         
                         // Service total = TotalPrice - TotalTravelFee (the service portion)
                         let servicePortion = (res.totalPrice - res.totalTravelFee);
@@ -766,6 +771,10 @@
                         // Travel Fee row
                         let distanceStr = currentLang === 'CN' ? '距离：' : 'Distance: ';
                         let distanceLabel = distanceStr + res.distanceKm.toFixed(1) + ' km';
+                        
+                        let distanceFeeStr = currentLang === 'CN' ? ' | 里程费：RM ' : ' | Dist. Fee: RM ';
+                        distanceLabel += distanceFeeStr + res.distanceFee.toFixed(2);
+                        
                         if (res.areaBasePrice > 0) {
                             let areaStr = currentLang === 'CN' ? ' | 区域基础费：RM ' : ' | Area Base: RM ';
                             distanceLabel += areaStr + res.areaBasePrice.toFixed(2);

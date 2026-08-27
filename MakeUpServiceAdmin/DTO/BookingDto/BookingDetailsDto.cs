@@ -15,5 +15,6 @@
         public decimal TotalPrice { get; set; }
         public string Status { get; set; }
         public decimal ServicePrice { get; set; }
+        public decimal TotalDurationMinutes { get; set; }
     }
 }

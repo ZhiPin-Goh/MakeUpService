@@ -1,4 +1,4 @@
-﻿using MakeUpServiceAdmin.Service;
+using MakeUpServiceAdmin.Service;
 using MakeUpServiceAdmin.ViewModel.FeeVm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +36,9 @@ namespace MakeUpServiceAdmin.Controllers
                 {
                     IsSuccess = true,
                     TravelFee = result.TravelFee,
-                    DistanceKm = result.DistanceKm
+                    DistanceKm = result.DistanceKm,
+                    DistanceFee = result.DistanceFee,
+                    AreaFee = result.AreaFee
                 });
             }
             else

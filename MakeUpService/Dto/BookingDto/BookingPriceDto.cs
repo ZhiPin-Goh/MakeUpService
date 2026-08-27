@@ -1,4 +1,4 @@
-﻿namespace MakeUpService.Dto.BookingDto
+namespace MakeUpService.Dto.BookingDto
 {
     public class BookingPriceDto
     {
@@ -8,5 +8,8 @@
         public double DistanceKm { get; set; }
         public decimal TotalTravelFee { get; set; }
         public decimal TotalPrice { get; set; }
+        public int Pax { get; set; }
+        public decimal DistanceFee { get; set; }
+        public decimal TotalBookingDuration { get; set; }
     }
 }

@@ -370,9 +370,19 @@
                         <span id="summary-distance" class="summary-row-val summary-row-val-mono">--</span>
                     </div>
                     
-                    <div class="summary-row" style="border-bottom: none;">
+                    <div class="summary-row">
+                        <span class="summary-row-label">Distance Fee</span>
+                        <span id="summary-distance-fee" class="summary-row-val summary-row-val-mono">RM 0.00</span>
+                    </div>
+                    
+                    <div class="summary-row">
                         <span class="summary-row-label">Travel Zone</span>
                         <span id="summary-zone" class="summary-row-val summary-row-val-med">--</span>
+                    </div>
+                    
+                    <div class="summary-row" style="border-bottom: none;">
+                        <span class="summary-row-label">Area Fee</span>
+                        <span id="summary-area-fee" class="summary-row-val summary-row-val-mono">RM 0.00</span>
                     </div>
 
                     <div class="summary-total-row" style="border-top: 1px solid var(--color-surface-container-highest); padding-top: 1rem;">
@@ -505,8 +515,14 @@
                             var distance = res.distanceKm || res.DistanceKm || 0;
                             $('#summary-distance').text(distance.toFixed(2) + ' km');
                             
+                            var distanceFee = res.distanceFee || res.DistanceFee || 0;
+                            $('#summary-distance-fee').text('RM ' + distanceFee.toFixed(2));
+                            
                             var zoneText = areaIdStr ? $('#AreaID option:selected').text().split(' (')[0] : 'Custom Distance';
                             $('#summary-zone').text(zoneText);
+                            
+                            var areaFee = res.areaFee || res.AreaFee || 0;
+                            $('#summary-area-fee').text('RM ' + areaFee.toFixed(2));
                             
                             var fee = res.travelFee || res.TravelFee || 0;
                             $('#summary-fee').text('RM ' + fee.toFixed(2));

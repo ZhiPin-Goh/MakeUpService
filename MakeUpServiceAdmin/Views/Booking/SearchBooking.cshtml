@@ -864,6 +864,7 @@
                             address:         data.address         ?? data.Address         ?? 'N/A',
                             service:         data.service         ?? data.Service         ?? '',
                             servicePrice:    data.servicePrice    ?? data.ServicePrice    ?? 0,
+                            totalDurationMinutes: data.totalDurationMinutes ?? data.TotalDurationMinutes ?? 0,
                             travelFee:       data.travelFee       ?? data.TravelFee       ?? 0,
                             totalPrice:      data.totalPrice      ?? data.TotalPrice      ?? 0,
                             status:          data.status          ?? data.Status          ?? ''
@@ -901,6 +902,7 @@
                         html += '  <div><p class="details-label">Service</p><p class="details-value">' + d.service + '</p></div>';
                         html += '  <div><p class="details-label">Date</p><p class="details-value">' + dateStr + '</p></div>';
                         html += '  <div><p class="details-label">Time</p><p class="details-value">' + d.appointmentTime + '</p></div>';
+                        html += '  <div><p class="details-label">Duration</p><p class="details-value">' + (d.totalDurationMinutes ? d.totalDurationMinutes + ' mins' : 'N/A') + '</p></div>';
                         html += '  <div><p class="details-label">Area</p><p class="details-value">' + d.area + '</p></div>';
                         html += '  <div class="details-col-span-2"><p class="details-label">Address</p><p class="details-value">' + d.address + '</p></div>';
                         html += '</div>';
