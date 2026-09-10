@@ -2,25 +2,32 @@
     ViewData["Title"] = "404 Not Found";
 }
 
-<div class="min-h-[70vh] flex items-center justify-center px-margin-mobile md:px-margin-desktop py-12 md:py-20">
-    <div class="text-center max-w-2xl mx-auto">
-        <div class="w-20 h-20 rounded-3xl bg-error-container/10 text-error flex items-center justify-center mx-auto mb-6">
-            <i data-lucide="alert-circle" class="w-10 h-10"></i>
+<div class="min-h-[70vh] flex items-center justify-center px-6 py-12 md:py-20 bg-background text-on-background">
+    <div class="text-center max-w-2xl mx-auto flex flex-col items-center">
+        <!-- Graphic / Icon -->
+        <div class="w-24 h-24 rounded-full bg-primary-container/20 text-primary flex items-center justify-center mb-8 shadow-sm">
+            <i data-lucide="map" style="width: 3rem; height: 3rem;"></i>
         </div>
-        <h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-primary mb-4">
-            <span>404 - Page Not Found</span>
+        
+        <h1 class="font-display text-5xl md:text-7xl text-primary mb-4 font-bold tracking-widest">
+            404
         </h1>
-        <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed mb-8">
-            <span>Oops! The page you're looking for doesn't exist, has been moved, or is temporarily unavailable.</span>
+        <h2 class="font-sans text-2xl md:text-3xl text-on-background mb-4 font-semibold uppercase tracking-wider">
+            Page Not Found
+        </h2>
+        
+        <p class="font-sans text-base text-on-surface-variant leading-relaxed mb-10 max-w-lg">
+            Oops! It seems you've wandered off the path. The page you're looking for might have been moved, deleted, or perhaps never existed at all.
         </p>
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="/" class="w-full sm:w-auto bg-primary-container text-white px-8 py-3.5 rounded-full font-label-md text-sm flex items-center justify-center gap-2 shadow-sm hover:bg-primary-fixed hover:text-on-primary-fixed transition-all text-decoration-none">
-                <i data-lucide="home" class="w-4 h-4"></i>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+            <a href="/" class="w-full sm:w-auto bg-primary text-white px-8 py-3.5 rounded-full font-sans text-sm font-semibold tracking-widest uppercase flex items-center justify-center gap-2 shadow-md hover:bg-transparent hover:text-primary border border-primary transition-all duration-300">
+                <i data-lucide="home" style="width: 1rem; height: 1rem;"></i>
                 <span>Back to Home</span>
             </a>
-            <a href="/faq" class="w-full sm:w-auto bg-surface-container-high text-on-surface hover:bg-surface-container-highest px-8 py-3.5 rounded-full font-label-md text-sm flex items-center justify-center gap-2 transition-all border border-outline-variant/20 text-decoration-none">
-                <i data-lucide="help-circle" class="w-4 h-4"></i>
-                <span>Visit Help Center</span>
+            <a href="/booking" class="w-full sm:w-auto bg-transparent text-primary border border-primary px-8 py-3.5 rounded-full font-sans text-sm font-semibold tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 hover:bg-primary hover:text-white">
+                <i data-lucide="calendar" style="width: 1rem; height: 1rem;"></i>
+                <span>Book Now</span>
             </a>
         </div>
     </div>
