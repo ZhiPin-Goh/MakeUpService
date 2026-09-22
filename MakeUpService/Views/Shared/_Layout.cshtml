@@ -265,6 +265,227 @@
             gap: 0.5rem 1.5rem;
         }
 
+        .floating-chat-widget {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            flex-direction: row;
+        }
+        @@media (min-width: 768px) {
+            .floating-chat-widget {
+                bottom: 5rem;
+                right: 4rem;
+            }
+        }
+
+        .chat-icon-btn {
+            background-color: var(--color-primary);
+            color: var(--color-on-primary);
+            border-radius: 9999px;
+            height: 3.5rem;
+            width: 3.5rem;
+            box-shadow: 0 10px 20px -5px rgba(212, 175, 55, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .chat-icon-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 25px -5px rgba(212, 175, 55, 0.3);
+        }
+        .chat-icon-btn:active {
+            transform: scale(0.9);
+        }
+
+        .chat-bubble {
+            background-color: var(--color-primary-container);
+            color: var(--color-on-primary-container);
+            border-radius: 1.25rem;
+            padding: 0.75rem 1.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1.4;
+            max-width: 12rem;
+            word-wrap: break-word;
+            animation: bubbleFade 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        .chat-bubble::after {
+            content: '';
+            position: absolute;
+            right: -11px;
+            bottom: 0.5rem;
+            width: 0;
+            height: 0;
+            border-left: 12px solid var(--color-primary-container);
+            border-top: 9px solid transparent;
+            border-bottom: 9px solid transparent;
+        }
+
+        .floating-chat-widget.is-open .chat-bubble {
+            display: none;
+        }
+
+        .floating-chat-panel {
+            position: absolute;
+            right: 0;
+            bottom: 4.25rem;
+            width: min(22rem, calc(100vw - 2rem));
+            height: 28rem;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--color-surface);
+            border: 1px solid rgba(212, 196, 183, 0.35);
+            border-radius: 1rem;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+        }
+
+        .floating-chat-widget.is-open .floating-chat-panel {
+            display: flex;
+        }
+
+        .floating-chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.9rem 1rem;
+            background: var(--color-primary);
+            color: var(--color-on-primary);
+        }
+
+        .floating-chat-title {
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .floating-chat-close {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            padding: 0;
+            border: 0;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.18);
+            color: var(--color-on-primary);
+            cursor: pointer;
+        }
+
+        .floating-chat-messages {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            padding: 0.85rem;
+            background: var(--color-surface-container-lowest);
+        }
+
+        .floating-chat-message {
+            max-width: 86%;
+            padding: 0.6rem 0.75rem;
+            border-radius: 0.85rem;
+            font-size: 0.8rem;
+            line-height: 1.45;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .floating-chat-message.model {
+            align-self: flex-start;
+            background: rgba(189, 154, 115, 0.16);
+            color: var(--color-on-background);
+            border-bottom-left-radius: 0.2rem;
+        }
+
+        .floating-chat-message.user {
+            align-self: flex-end;
+            background: rgba(212, 196, 183, 0.38);
+            color: var(--color-on-surface);
+            border-bottom-right-radius: 0.2rem;
+        }
+
+        .floating-chat-form {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.4rem;
+            padding: 0.65rem;
+            border-top: 1px solid rgba(212, 196, 183, 0.35);
+            background: var(--color-surface);
+        }
+
+        .floating-chat-input {
+            min-width: 0;
+            flex: 1;
+            min-height: 2.3rem;
+            max-height: 5rem;
+            padding: 0.55rem 0.75rem;
+            resize: none;
+            border: 1px solid rgba(212, 196, 183, 0.8);
+            border-radius: 1rem;
+            background: var(--color-surface-container-lowest);
+            color: var(--color-on-background);
+            font: inherit;
+            font-size: 0.8rem;
+        }
+
+        .floating-chat-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .floating-chat-send {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 2.3rem;
+            height: 2.3rem;
+            padding: 0;
+            border: 0;
+            border-radius: 9999px;
+            background: var(--color-primary-container);
+            color: var(--color-on-primary);
+            cursor: pointer;
+        }
+
+        .floating-chat-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @@media (max-width: 480px) {
+            .floating-chat-widget {
+                right: 1rem;
+                bottom: 1rem;
+            }
+
+            .floating-chat-panel {
+                right: -0.25rem;
+                bottom: 4.25rem;
+            }
+        }
+
+        @@keyframes bubbleFade {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
         .floating-chatbot {
             position: fixed;
             bottom: 1.5rem;
@@ -543,14 +764,28 @@
                 </div>
             </footer>
 
-            <div class="floating-chatbot group">
-                <a href="/chat" aria-label="Assistant" class="chatbot-btn">
-                    <i data-lucide="sparkles"></i>
-                </a>
-                <div class="chatbot-tooltip">
-                    <div class="chatbot-tooltip-title">Assistant</div>
-                    <div class="chatbot-tooltip-desc">Ask me anything about my services</div>
+            <div class="floating-chat-widget">
+                <div class="floating-chat-panel" aria-hidden="true">
+                    <div class="floating-chat-header">
+                        <h2 class="floating-chat-title">Shirley's Assistant</h2>
+                        <button type="button" id="floating-chat-close" class="floating-chat-close" aria-label="Close chat">
+                            <i data-lucide="x" style="width: 1rem; height: 1rem;"></i>
+                        </button>
+                    </div>
+                    <div id="floating-chat-messages" class="floating-chat-messages"></div>
+                    <form id="floating-chat-form" class="floating-chat-form">
+                        <textarea id="floating-chat-input" class="floating-chat-input" rows="1" placeholder="Type your message..." aria-label="Chat message"></textarea>
+                        <button type="submit" id="floating-chat-send" class="floating-chat-send" aria-label="Send message" disabled>
+                            <i data-lucide="send" style="width: 1rem; height: 1rem;"></i>
+                        </button>
+                    </form>
                 </div>
+                <div class="chat-bubble">
+                    <span>May I help you.....</span>
+                </div>
+                <button type="button" id="floating-chat-toggle" aria-label="Open chat" class="chat-icon-btn" aria-expanded="false">
+                    <i data-lucide="message-circle"></i>
+                </button>
             </div>
         }
     </div>
@@ -681,11 +916,11 @@
             $('a[href="/"]').on('click', function(e) {
                 if (window.location.pathname === '/') {
                     e.preventDefault();
-                    
+
                     // Close mobile menu if open
                     $('#mobile-menu').removeClass('opacity-100 pointer-events-auto').addClass('opacity-0 pointer-events-none');
                     $('body').css('overflow', '');
-                    
+
                     if (typeof lenis !== 'undefined') {
                         lenis.scrollTo(0, { duration: 1.2 });
                     } else {
@@ -693,6 +928,123 @@
                     }
                 }
             });
+
+            var $floatingWidget = $('.floating-chat-widget');
+            var $chatToggle = $('#floating-chat-toggle');
+            var $chatClose = $('#floating-chat-close');
+            var $chatPanel = $('.floating-chat-panel');
+            var $chatMessages = $('#floating-chat-messages');
+            var $chatForm = $('#floating-chat-form');
+            var $chatInput = $('#floating-chat-input');
+            var $chatSend = $('#floating-chat-send');
+
+            if ($floatingWidget.length) {
+                var floatingStorageKey = 'aiChatHistory';
+                var floatingMessages = JSON.parse(sessionStorage.getItem(floatingStorageKey) || '[]');
+
+                function saveFloatingMessages() {
+                    sessionStorage.setItem(floatingStorageKey, JSON.stringify(floatingMessages));
+                }
+
+                function appendFloatingMessage(role, text) {
+                    var safeText = $('<div>').text(text).html();
+                    $chatMessages.append('<div class="floating-chat-message ' + role + '">' + safeText + '</div>');
+                    $chatMessages.scrollTop($chatMessages[0].scrollHeight);
+                }
+
+                function renderFloatingMessages() {
+                    $chatMessages.empty();
+                    floatingMessages.forEach(function(message) {
+                        appendFloatingMessage(message.Role === 'user' ? 'user' : 'model', message.Text);
+                    });
+                }
+
+                function syncSendState() {
+                    $chatSend.prop('disabled', $chatInput.val().trim().length === 0);
+                }
+
+                function autoResizeInput() {
+                    $chatInput.css('height', 'auto');
+                    var nextHeight = Math.min($chatInput[0].scrollHeight, 80);
+                    $chatInput.css('height', nextHeight + 'px');
+                }
+
+                if (floatingMessages.length === 0) {
+                    floatingMessages.push({
+                        Role: 'model',
+                        Text: "Hello! I am Shirley's digital ai assistant. How can I help you today with bookings, services, or pricing?"
+                    });
+                    saveFloatingMessages();
+                }
+                renderFloatingMessages();
+
+                $chatToggle.on('click', function() {
+                    var isOpen = $floatingWidget.hasClass('is-open');
+                    $floatingWidget.toggleClass('is-open', !isOpen);
+                    $chatPanel.attr('aria-hidden', isOpen ? 'true' : 'false');
+                    $chatToggle.attr('aria-expanded', isOpen ? 'false' : 'true');
+                    if (!isOpen) {
+                        $chatInput.trigger('focus');
+                    }
+                });
+
+                $chatClose.on('click', function() {
+                    $floatingWidget.removeClass('is-open');
+                    $chatPanel.attr('aria-hidden', 'true');
+                    $chatToggle.attr('aria-expanded', 'false');
+                });
+
+                $chatInput.on('input', function() {
+                    autoResizeInput();
+                    syncSendState();
+                });
+
+                $chatInput.on('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        $chatForm.trigger('submit');
+                    }
+                });
+
+                $chatForm.on('submit', function(e) {
+                    e.preventDefault();
+                    var userMessage = $chatInput.val().trim();
+                    if (!userMessage) return;
+
+                    var historyToSend = floatingMessages.slice();
+                    floatingMessages.push({ Role: 'user', Text: userMessage });
+                    saveFloatingMessages();
+                    renderFloatingMessages();
+                    $chatInput.val('');
+                    autoResizeInput();
+                    syncSendState();
+                    $chatInput.prop('disabled', true);
+
+                    $.ajax({
+                        url: '/chat/send',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ NewMessage: userMessage, History: historyToSend }),
+                        success: function(response) {
+                            floatingMessages.push({
+                                Role: 'model',
+                                Text: response.message || "I'm sorry, I couldn't process your request."
+                            });
+                            saveFloatingMessages();
+                            renderFloatingMessages();
+                        },
+                        error: function() {
+                            floatingMessages.push({ Role: 'model', Text: 'Network error. Please try again.' });
+                            saveFloatingMessages();
+                            renderFloatingMessages();
+                        },
+                        complete: function() {
+                            $chatInput.prop('disabled', false).trigger('focus');
+                            syncSendState();
+                        }
+                    });
+                });
+            }
         });
     </script>
     
