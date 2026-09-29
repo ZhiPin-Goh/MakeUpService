@@ -159,6 +159,12 @@
         padding: 3rem;
         color: rgba(80, 69, 59, 0.6);
     }
+
+    .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
 </style>
 
 <div class="page-wrapper" id="feedback-root">
@@ -166,6 +172,11 @@
         <div class="header-title-container">
             <h2>Customer Feedbacks</h2>
             <p>Review client feedback and inquiries.</p>
+        </div>
+        <div class="header-actions">
+            <button type="button" id="btn-clear-resolved-feedback" class="btn-ghost">
+                <i data-lucide="trash-2" style="width: 1rem; height: 1rem;"></i> Clear Resolved
+            </button>
         </div>
     </div>
 
@@ -197,6 +208,7 @@
                     </a>
                 </div>
             </div>
+
         </form>
         <table class="data-table">
             <thead>
@@ -269,3 +281,48 @@
         </table>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#btn-clear-resolved-feedback').on('click', function () {
+                if (!confirm('Are you sure you want to clear all resolved feedback?')) {
+                    return;
+                }
+
+                var $button = $(this);
+                var originalHtml = $button.html();
+                $button.prop('disabled', true).html('<i data-lucide="loader" style="width: 1rem; height: 1rem;"></i> Clearing...');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+                $.ajax({
+                    url: '@Url.Action("ClearResolvedFeedback", "Feedback")',
+                    type: 'POST',
+                    success: function (response) {
+                        if (response.success) {
+                            if (typeof window.AppToast !== 'undefined') {
+                                window.AppToast.success(response.message || 'Resolved feedback cleared successfully.');
+                            }
+                            setTimeout(function () { window.location.reload(); }, 800);
+                        } else {
+                            showClearError(response.message || 'Failed to clear resolved feedback.');
+                        }
+                    },
+                    error: function () {
+                        showClearError('Server error while clearing resolved feedback.');
+                    }
+                });
+
+                function showClearError(message) {
+                    if (typeof window.AppToast !== 'undefined') {
+                        window.AppToast.error(message);
+                    } else {
+                        alert(message);
+                    }
+                    $button.prop('disabled', false).html(originalHtml);
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }
+            });
+        });
+    </script>
+}

@@ -42,8 +42,13 @@ namespace MakeUpServiceAdmin.Controllers
                 return Json(new { success = false, message = "Invalid feedback ID." });
             }
            var result = await _services.FeedbackResolveAsync(feedbackID);
-            return Json(new { success = result.IsSuccess, });
+            return Json(new { success = result.IsSuccess});
         }
-
+        [HttpPost("feedback/clear-resolve")]
+        public async Task<IActionResult> ClearResolvedFeedback()
+        {
+            var result = await _services.ClearResolveFeedbackAsync();
+            return Json(new { success = result.IsSuccess, message = result.Message });
+        }
     }
 }

@@ -66,5 +66,19 @@ namespace MakeUpServiceAdmin.Service
                 return (false, errorMessage?.Message ?? $"Failed to resolve feedback. Status code: {response.StatusCode}");
             }
         }
+        public async Task<(bool IsSuccess, string Message)> ClearResolveFeedbackAsync()
+        {
+            var response = await _httpClient.PostAsync($"api/admin/feedback/clear-resolve", null);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadFromJsonAsync<ApiResponse>();
+                return (true, content?.Message ?? "All resolved feedback cleaned successfully.");
+            }
+            else
+            {
+                var errorMessage = await response.Content.ReadFromJsonAsync<ApiResponse>();
+                return (false, errorMessage?.Message ?? $"Failed to clean resolved feedback. Status code: {response.StatusCode}");
+            }
+        }
     }
 }
