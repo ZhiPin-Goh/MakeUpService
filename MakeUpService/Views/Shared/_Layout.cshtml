@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>@ViewData["Title"] - Shirley Beauty</title>
     <!-- Tailwind v4 CDN -->
     <script src="https://unpkg.com/@@tailwindcss/browser@4"></script>
@@ -50,6 +50,17 @@
         body {
             background-color: var(--color-background);
             color: var(--color-on-background);
+        }
+
+        .chat-layout.chat-layout {
+            height: var(--visual-viewport-height, 100dvh);
+            min-height: 0;
+        }
+
+        .chat-layout.chat-layout > main {
+            flex: 1 1 0%;
+            height: auto;
+            min-height: 0;
         }
 
         /* Basic Resets to fix browser default link colors */
@@ -371,6 +382,14 @@
             font-weight: 600;
         }
 
+        .floating-chat-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-shrink: 0;
+        }
+
+        .floating-chat-clear,
         .floating-chat-close {
             display: flex;
             align-items: center;
@@ -383,6 +402,11 @@
             background: rgba(255, 255, 255, 0.18);
             color: var(--color-on-primary);
             cursor: pointer;
+        }
+
+        .floating-chat-clear:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .floating-chat-messages {
@@ -472,13 +496,21 @@
         @@media (max-width: 480px) {
             .floating-chat-widget {
                 right: 1rem;
-                bottom: 1rem;
+                bottom: calc(var(--keyboard-inset, 0px) + env(safe-area-inset-bottom, 1rem));
             }
 
             .floating-chat-panel {
-                right: -0.25rem;
-                bottom: 4.25rem;
+                position: fixed;
+                right: 1rem;
+                bottom: calc(var(--keyboard-inset, 0px) + 5.25rem);
+                height: min(28rem, calc(var(--visual-viewport-height, 100dvh) - 6rem));
+                max-height: calc(var(--visual-viewport-height, 100dvh) - 6rem);
+                background: var(--color-background);
             }
+        }
+
+        .floating-chat-messages {
+            background: var(--color-surface-container-low);
         }
 
         @@keyframes bubbleFade {
@@ -620,7 +652,7 @@
     
     @{
         bool isChat = Context.Request.Path.StartsWithSegments("/chat", StringComparison.OrdinalIgnoreCase);
-        string layoutClasses = isChat ? "h-dvh overflow-y-hidden" : "min-h-screen";
+        string layoutClasses = isChat ? "chat-layout h-dvh overflow-y-hidden" : "min-h-screen";
         string mainClasses = isChat ? "flex flex-col h-full overflow-hidden" : "";
     }
 
@@ -768,9 +800,14 @@
                 <div class="floating-chat-panel" aria-hidden="true">
                     <div class="floating-chat-header">
                         <h2 class="floating-chat-title">Shirley's Assistant</h2>
-                        <button type="button" id="floating-chat-close" class="floating-chat-close" aria-label="Close chat">
-                            <i data-lucide="x" style="width: 1rem; height: 1rem;"></i>
-                        </button>
+                        <div class="floating-chat-actions">
+                            <button type="button" id="floating-chat-clear" class="floating-chat-clear" aria-label="Clear chat history" title="Clear chat history">
+                                <i data-lucide="trash-2" style="width: 1rem; height: 1rem;"></i>
+                            </button>
+                            <button type="button" id="floating-chat-close" class="floating-chat-close" aria-label="Close chat">
+                                <i data-lucide="x" style="width: 1rem; height: 1rem;"></i>
+                            </button>
+                        </div>
                     </div>
                     <div id="floating-chat-messages" class="floating-chat-messages"></div>
                     <form id="floating-chat-form" class="floating-chat-form">
@@ -826,6 +863,25 @@
     </script>
 
     <script>
+        (function() {
+            var viewport = window.visualViewport;
+
+            function updateViewportSize() {
+                var height = viewport ? viewport.height : window.innerHeight;
+                var offsetTop = viewport ? viewport.offsetTop : 0;
+                var keyboardInset = Math.max(0, window.innerHeight - height - offsetTop);
+                document.documentElement.style.setProperty('--visual-viewport-height', height + 'px');
+                document.documentElement.style.setProperty('--keyboard-inset', keyboardInset + 'px');
+            }
+
+            updateViewportSize();
+            window.addEventListener('resize', updateViewportSize);
+            if (viewport) {
+                viewport.addEventListener('resize', updateViewportSize);
+                viewport.addEventListener('scroll', updateViewportSize);
+            }
+        })();
+
         lucide.createIcons();
         
         // Global object to store translations loaded from JSON (EN -> CN mapping)
@@ -937,6 +993,7 @@
             var $chatForm = $('#floating-chat-form');
             var $chatInput = $('#floating-chat-input');
             var $chatSend = $('#floating-chat-send');
+            var $chatClear = $('#floating-chat-clear');
 
             if ($floatingWidget.length) {
                 var floatingStorageKey = 'aiChatHistory';
@@ -944,6 +1001,15 @@
 
                 function saveFloatingMessages() {
                     sessionStorage.setItem(floatingStorageKey, JSON.stringify(floatingMessages));
+                }
+
+                function clearFloatingHistory() {
+                    floatingMessages = [{
+                        Role: 'model',
+                        Text: "Hello! I am Shirley's digital ai assistant. How can I help you today with bookings, services, or pricing?"
+                    }];
+                    saveFloatingMessages();
+                    renderFloatingMessages();
                 }
 
                 function appendFloatingMessage(role, text) {
@@ -978,12 +1044,18 @@
                 }
                 renderFloatingMessages();
 
+                $chatClear.on('click', function() {
+                    if (window.confirm('Clear chat history and start over?')) {
+                        clearFloatingHistory();
+                    }
+                });
+
                 $chatToggle.on('click', function() {
                     var isOpen = $floatingWidget.hasClass('is-open');
                     $floatingWidget.toggleClass('is-open', !isOpen);
                     $chatPanel.attr('aria-hidden', isOpen ? 'true' : 'false');
                     $chatToggle.attr('aria-expanded', isOpen ? 'false' : 'true');
-                    if (!isOpen) {
+                    if (!isOpen && window.matchMedia('(min-width: 768px)').matches) {
                         $chatInput.trigger('focus');
                     }
                 });
@@ -1019,6 +1091,7 @@
                     autoResizeInput();
                     syncSendState();
                     $chatInput.prop('disabled', true);
+                    $chatClear.prop('disabled', true);
 
                     $.ajax({
                         url: '/chat/send',
@@ -1040,6 +1113,7 @@
                         },
                         complete: function() {
                             $chatInput.prop('disabled', false).trigger('focus');
+                            $chatClear.prop('disabled', false);
                             syncSendState();
                         }
                     });

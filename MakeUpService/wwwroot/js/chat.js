@@ -15,10 +15,19 @@ $(document).ready(function () {
     const $chatInput = $('#chat-input');
     const $chatForm = $('#chat-form');
     const $submitBtn = $('#chat-submit-btn');
+    const $clearHistory = $('#chat-clear-history');
 
     function saveMessages() {
         sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
     }
+
+    $clearHistory.on('click', function () {
+        if (!window.confirm('Clear chat history and start over?')) return;
+
+        messages = [{ Role: 'model', Text: DEFAULT_MESSAGE }];
+        saveMessages();
+        renderMessages();
+    });
 
     function scrollToBottom() {
         $chatMessages.scrollTop($chatMessages[0].scrollHeight);
@@ -118,6 +127,7 @@ $(document).ready(function () {
         $chatInput.css('height', 'auto'); // Reset height after submit
         $submitBtn.prop('disabled', true);
         $chatInput.prop('disabled', true);
+        $clearHistory.prop('disabled', true);
 
         // Prepare request body matching AiChatRequest C# class
         const requestBody = {
@@ -146,6 +156,7 @@ $(document).ready(function () {
             },
             complete: function () {
                 $chatInput.prop('disabled', false).focus();
+                $clearHistory.prop('disabled', false);
             }
         });
     });

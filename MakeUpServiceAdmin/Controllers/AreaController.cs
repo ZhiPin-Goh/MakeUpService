@@ -72,7 +72,7 @@ namespace MakeUpServiceAdmin.Controllers
                     message = "Invalid data."
                 });
             }
-            if (model.AreaID == 0)
+            if (model.AreaID < 0)
             {
                 return Json(new
                 {
